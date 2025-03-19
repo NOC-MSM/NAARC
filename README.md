@@ -2,6 +2,8 @@
 
 The setup script has been tested and will checkout, compile and run the NAARC (NEMO 4.2.2) code on: ARCHER2 for Cray-MPICH and GNU-MPICH, and Anemone for iFort. 
 
+[Documentation](https://noc-msm.github.io/NAARC/)
+
 ## Quick Start:
 On ARCHER2
 ```
