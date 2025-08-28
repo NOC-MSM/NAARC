@@ -251,7 +251,7 @@ CONTAINS
                   ptsd(ji,jj,jk,jp_tem) = sf_tsd(jp_tem)%fnow(ji,jj,jpk_init)
                   ptsd(ji,jj,jk,jp_sal) = sf_tsd(jp_sal)%fnow(ji,jj,jpk_init)
                ELSE                                      ! inbetween : vertical interpolation between jkk & jkk+1
-                  DO jk_init = 1, jpk_init-1                                    ! when  gdept(jk_init) < zl < gdept(jk_init+1)
+                  DO jk_init = 1, jpk_init-1      ! when  gdept[jk_init] < zl < gdept[jk_init+1] 
                      IF( sf_tsd(jp_msk)%fnow(ji,jj,jk_init+1) == 0 ) THEN       ! if there is no data fill down
                         sf_tsd(jp_tem)%fnow(ji,jj,jk_init+1) = sf_tsd(jp_tem)%fnow(ji,jj,jk_init)
                         sf_tsd(jp_sal)%fnow(ji,jj,jk_init+1) = sf_tsd(jp_sal)%fnow(ji,jj,jk_init)
