@@ -111,11 +111,11 @@ esac
 
 case "${NEMO_VER}"
   in
-  4.2|4.2.2|4.2.3)
+  4.2|4.2.2|4.2.3|5.0|5.0.1)
            echo "NEMO Version $NEMO_VER will be checked out"
 	   ;;
   *)       echo "NEMO Version not recognised"
-           echo "Versions available: 4.2.2"
+           echo "Versions available: 4.2, 4.2.2, 4.2.3, 5.0"
            exit 1
 esac
 
@@ -129,7 +129,7 @@ case "${NEMO_VER}"
            git sparse-checkout add /makenemo /mk /src /cfgs/SHARED /cfgs/ref_cfgs.txt /ext
            git checkout
            ;;
-  4.2.2|4.2.3)
+  4.2.2|4.2.3|5.*)
            git clone --filter=blob:none --no-checkout --depth 1 --sparse --branch $NEMO_VER https://forge.nemo-ocean.eu/nemo/nemo.git nemo
            cd nemo
            git sparse-checkout add /makenemo /mk /src /cfgs/SHARED /cfgs/ref_cfgs.txt /ext
@@ -140,7 +140,7 @@ esac
 # Now check EXTERNALS revision number before checking out the rest
 case "${NEMO_VER}"
   in
-  4.2|4.2.?)
+  4.2|4.2.?|5.*)
       echo "Nothing to do as EXTERNALS are integral to $NEMO_VER"
       ;;
   *)
@@ -166,14 +166,16 @@ echo "Checking out xios repository"
 #XIOS3/branches/xios-3.0-beta
 case "${NEMO_VER}"
   in
-  4.2|4.2.?) svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk@2379 xios
+  4.2|4.2.?|5.*) svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk@2379 xios
            cd xios
            cp $REPO_DIR/arch/xios/2/* ./arch
            ;;
-  *)       svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5@1964 xios
+  4.0.?)   svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5@1964 xios
            cd xios
            cp $REPO_DIR/arch/xios/2.5/* ./arch
            ;;
+  *)       echo "Nemo v < 4 is not supported by XIOS 2.5"
+           exit 1
 esac
 
 echo "Compiling xios"
@@ -302,7 +304,7 @@ done
 cd $WORK_DIR/nemo
 
 echo "Compiling nemo NAARC Config"
-./makenemo -m ${HPC_TARG}-${COMPILER}-${MPI_TARG} -r NAARC -j 16
+./makenemo -m ${HPC_TARG}-${COMPILER}-${MPI_TARG} -r NAARC -n NAARC -j 16
 
 echo
 echo "  Auto-Config: NAARC"
@@ -319,3 +321,4 @@ echo
 echo "  - submit via the sbatch command"
 
 echo
+
