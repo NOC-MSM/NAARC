@@ -64,7 +64,7 @@ misspelled variable in namelist namrun (ref) iostat =  5010
 misspelled variable in namelist namdom (ref) iostat =  5010*
 
 Changes have been made to translate the namelist_cfg_template and namelist_ice_cfg_template to v5 namelists by removing variables not present in the v5 namelist or changing the name of variables that changed. Values of variables have been left unchanged with the exeption of rn_alb_dpnd which was set to 0.30 but a new comment suggest that is outside the obs range 0.12 -- 0.25 so the new default 0.18 has be used for rn_alb_dpnd. 
-rn_frm_ht0 was left out of the v5 namelist_cfg_template because ice form drag is included in nemo v5.
+rn_frm_ht0 was left out of the v5 namelist_cfg_template because ice form drag is included in nemo v5. This means the ice\*.F90 files probably won't need to be carried over in MY_SRC
 
 Copied namelist_ref from nemo_v5 SHARED to EXPREF/5.0/ and EXPREF/5.0.1/. 
 
@@ -79,10 +79,39 @@ misspelled variable in namelist namtsd (cfg) iostat =  5010
  File ./data_1m_salinity_nomask.nc* not found
 rn_tide_ramp_dt must be lower than run duration*
 
-For namsbc_blk, ln_NCAR variable, work on MY_SRC files sbcblk.F90. Done. 
-For namrun, ln_rstdate and ln_reset_ts variables, work on MY_SRC files domain.F90, icerst.F90, in_out_manager.F90, restart.F90, dtatsd.F90, istate.F90. Done.
-For namlbc, ln_shlat2d, cn_shlat2d_file, cn_shlat2d_var variables, work on MY_SRC files dommsk.F90. Done but may need to come back to the conflict in IF ( .not. ln_shlat2d ) bit.
-For namtsd, ln_tsd_interp, sn_dep, sn_msk variables, work on MY_SRC files dtatsd.F90, sbcrnf.F90. Done.
+For namsbc_blk, ln_NCAR variable, work on MY_SRC files sbcblk.F90. Done.
+sbcblk.F90 also needs fldread.F90, sbc_oce.F90, iom.F90. Done iom.F90 didn't need updating.
+ 
+For namrun, ln_rstdate and ln_reset_ts variables, work on MY_SRC files domain.F90, icerst.F90, in_out_manager.F90, restart.F90, dtatsd.F90, istate.F90. Done, dtatsd.F90 needed the gdept() comment editing.
+No additions needed.
 
-James says I need to make find the changes in MY_SRC v4 that are relevent and need to be copied to the right place in v5 code.
+For namlbc, ln_shlat2d, cn_shlat2d_file, cn_shlat2d_var variables, work on MY_SRC files dommsk.F90. Done but may need to come back to the conflict in IF ( .not. ln_shlat2d ) bit.
+No additons needed.
+
+For namtsd, ln_tsd_interp, sn_dep, sn_msk variables, work on MY_SRC files dtatsd.F90, sbcrnf.F90. Done.
+No additions needed.
+
+*MY_SRC errors reduced to:
+misspelled variable in namelist namsbc_blk (cfg) iostat =  5010
+misspelled variable in namelist namrun (cfg) iostat =  5010
+misspelled variable in namelist namrun (ref) iostat =  5010
+rn_tide_ramp_dt must be lower than run duration*
+
+Started converting other files but lraving out momentum bit for now:
+diahth.F90. Done
+diapea.F90 not in v5 so copied from v4.2.2. Done
+diawri.F90. Done
+nemogcm.F90. Done
+sbcrnf.F90. Done
+sbcssm.F90. Done
+tide.h90. Done
+traldf.F90. Didn't need updating, no changes.
+traldf_triad.F90. Done, added "ldfull=.TRUE." to end of added function in line with v5 changes that occured in the previous line.
+traqsr.F90. Didn't need updating, no changes because the variable is defined in v5 as: nksr = nkV       ! name of max level of light extinction used in traatf(\_qco).F90
+trdini.F90. Done
+trdmxl.F90. Done
+trdmxl_rst.F90. Done
+trd_oce.F90. Didn't need updating, no changes.
+trdtra.F90. Done
+
 
