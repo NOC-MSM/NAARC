@@ -6,7 +6,7 @@ An error messgae for XIOS was added in the case that NEMO_VER is less 4.0.
 Copied the NEMO version 4.2.2 files to 5.0 for the folders /arch, /CPP, /MY_SRC, EXPREF.
 
 *Tired to compile but error:
-E R R O R : key key_isf is not found in /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs//WORK routines... *
+E R R O R : key key_isf is not found in /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs//WORK routines...*
 
 key-isf is in the NEMO v5 namelist_ref (in /cfgs/EXP00).
 Removed key_isf from CPP/5.0/cpp_NAARC.fcm and CPP/5.0.1/cpp_NAARC.fcm.
@@ -99,7 +99,7 @@ rn_tide_ramp_dt must be lower than run duration*
 
 Started converting other files but lraving out momentum bit for now:
 diahth.F90. Done
-diapea.F90 not in v5 so copied from v4.2.2. Done
+diapea.F90 not in v5 src so copied from v4.2.2. Done
 diawri.F90. Done
 nemogcm.F90. Done
 sbcrnf.F90. Done
@@ -113,5 +113,21 @@ trdmxl.F90. Done
 trdmxl_rst.F90. Done
 trd_oce.F90. Didn't need updating, no changes.
 trdtra.F90. Done
+zdfdrg.F90 Didn't need updating, no changes.
+zdfgls.F90 Didn't need updating, no changes.
+zdftke.F90. Done.
+
+Momentum files:
+bdydyn.F90 the key statement "IF ( l_trddyn )" is not present in v5 src.
+dynatf_qco.F90 not in v5 src so copied from v4.2.2. Done
+dynhpg.F90 Didn't need updating, no changes.
+dynspg.F90 Didn't need updating, no changes.
+dynvor.F90 Didn't need updating, no changes.
+dynzdf.F90 Didn't need updating, no changes.
+sbcmod.F90 Didn't need updating, no changes.
+trddyn.F90 Didn't need updating, no changes.
+trdini.F90. Done.
+dynspg_ts.F90 no changed, zt0substep looks different in v5 and l_trddyn not present before change.
+iceupdate.F90 zrhoco was not present in v5, no changes.
 
 
