@@ -66,6 +66,13 @@ CONTAINS
      &   .OR. cn_dyn3d(ib_bdy) == 'orlanski' .OR. cn_dyn3d(ib_bdy) == 'orlanski_npo')   ll_orlanski = .true.
       END DO
 
+      IF ( l_trddyn ) THEN
+         ALLOCATE( ua_tmp(jpi,jpj,jpk), va_tmp(jpi,jpj,jpk) )
+         ua_tmp(:,:,:) = puu(:,:,:,Kaa)
+         va_tmp(:,:,:) = pvv(:,:,:,Kaa)
+      ENDIF
+
+
       !-------------------------------------------------------
       ! Split velocities into barotropic and baroclinic parts
       !-------------------------------------------------------
@@ -117,6 +124,13 @@ CONTAINS
             pvv(:,:,jk,Kbb) = ( pvv(:,:,jk,Kbb) + vv_b(:,:,Kbb) ) * vmask(:,:,jk)
          END DO
       END IF
+      !
+      IF ( l_trddyn ) THEN
+         zbdytrdu(:,:,:) = ( puu(:,:,:,Kaa) - ua_tmp(:,:,:) ) * r1_Dt
+         zbdytrdv(:,:,:) = ( pvv(:,:,:,Kaa) - va_tmp(:,:,:) ) * r1_Dt
+         CALL trd_dyn( zbdytrdu, zbdytrdv, jpdyn_bdy, kt )
+         DEALLOCATE( ua_tmp, va_tmp, zbdytrdu, zbdytrdv )
+      ENDIF
       !
    END SUBROUTINE bdy_dyn
 
