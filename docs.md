@@ -144,5 +144,12 @@ Error: Missing actual argument for argument 'krhs' at (1)
 
 Changed trdtra.F90 in MY_SRC (I'd added the Krhs arg to the wrong function).
 
+Compilation successful.
+Run Errors:
+misspelled variable in namelist namrun (ref) iostat =  5010
+misspelled variable in namelist namrun (cfg) iostat =  5010
+misspelled variable in namelist namsbc_blk (cfg) iostat =  5010
+rn_tide_ramp_dt must be lower than run duration
 
+Tried again at updating the namelist and namelist_ice from 4.2.2 to 5.0
 
