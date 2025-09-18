@@ -1,7 +1,7 @@
 !!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 !! NEMO/OCE :   Reference namelist_ref                                !!
 !!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-!! NEMO/OCE  :  1 - Domain & run manager (namrun, namcfg, namdom, namtsd, namcrs, namc1d, namc1d_uvd)
+!! NEMO/OCE  :  1 - Domain & run manager (namrun, namcfg, namdom, namtsd, namc1d, namc1d_uvd)
 !! namelists    2 - Surface boundary (namsbc, namsbc_flx, namsbc_blk, namsbc_cpl,
 !!                                    namsbc_sas, namtra_qsr, namsbc_rnf,
 !!                                    namisf, namsbc_apr, 
@@ -11,7 +11,7 @@
 !!              5 - Tracer           (nameos, namtra_adv, namtra_ldf, namtra_eiv, namtra_dmp)
 !!              6 - dynamics         (namdyn_adv, namdyn_vor, namdyn_hpg, namdyn_spg, namdyn_ldf)
 !!              7 - Vertical physics (namzdf, namzdf_ric, namzdf_tke, namzdf_gls, namzdf_iwm)
-!!              8 - diagnostics      (namnc4, namtrd, namspr, namflo, namhsb)
+!!              8 - diagnostics      (namnc4, namtrd, namspr)
 !!              9 - Obs & Assim      (namobs, nam_asminc)
 !!             10 - miscellaneous    (nammpp, namctl, namsto)
 !!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -25,6 +25,8 @@
 !!   namwad       Wetting and drying                                    (default: OFF)
 !!   namtsd       data: temperature & salinity                          (default: OFF)
 !!   namc1d       1D configuration options                              (ln_c1d =T)
+!!   namc1d_dyndmp 1D newtonian damping applied on currents             (ln_c1d =T)
+!!   namc1d_uvd   1D data (currents)                                    (ln_c1d =T)
 !!======================================================================
 !
 !-----------------------------------------------------------------------
@@ -40,7 +42,6 @@
    nn_time0    =       0000   !  initial time of day in hhmm
    nn_leapy    =       1   !  Leap year calendar (1) or not (0)
    ln_rstart   = XXX_RST_XXX,   !  start from rest (F) or from a restart file (T)
-      ln_1st_euler =.false.,  !  =T force a start with forward time step (ln_rstart=T)
       nn_rstctl    = 2   !  restart control ==> activated only if ln_rstart=T
       !                          !    = 0 nn_date0 read in namelist ; nn_it000 : read in namelist
       !                          !    = 1 nn_date0 read in namelist ; nn_it000 : check consistancy between namelist and restart
@@ -63,15 +64,11 @@
 !-----------------------------------------------------------------------
 &namdom        !   time and space domain
 !-----------------------------------------------------------------------
-   ln_linssh   =.false.,   !  =T  linear free surface  ==>>  model level are fixed in time
-   !
    rn_Dt       = XXX_RDT_XXX     !  time step for the dynamics and tracer
-   rn_atfp     =    0.05,    !  asselin time filter parameter
    !
-   ln_crs      =.false.,   !  Logical switch for coarsening module      (T => fill namcrs)
    ln_c1d      =.false.,   !  Single column domain (1x1pt)              (T => fill namc1d)
    !
-   ln_meshmask =.false.,   !  =T create a mesh file
+   ln_meshmask =.false.,  !  =T create a mesh file
 /
 !-----------------------------------------------------------------------
 &namcfg        !   parameters of the configuration                      (default: use namusr_def in namelist_cfg)
@@ -86,8 +83,6 @@
    ln_write_cfg =.false.,    !  (=T) create the domain configuration file
       cn_domcfg_out = "domain_cfg_out" ! newly created domain configuration filename
       !
-   ln_use_jattr =.false.,    !  use (T) the file attribute: open_ocean_jstart, if present
-   !                         !  in netcdf input files, as the start j-row for reading
 /
 !-----------------------------------------------------------------------
 &namclo        !   parameters of the closed sea (cs) behavior                (default: OFF)
@@ -155,8 +150,10 @@
    ln_dm2dc    =.false.,   !  daily mean to diurnal cycle on short wave
    ln_ssr      =.false.,   !  Sea Surface Restoring on T and/or S       (T => fill namsbc_ssr)
    nn_fwb      = 0         !  FreshWater Budget: =0 unchecked
-      !                    !     =1 global mean of e-p-r set to zero at each time step
-      !                    !     =2 annual global mean of e-p-r set to zero
+      !                    !     =1 volume set to zero at each time step
+      !                    !     =2 volume adjusted from previous year budget (uniform correction to emp)
+      !                    !     =3 volume adjusted from previous year budget (non-uniform correction - proportional to erp)
+      !                    !     =4 special treatment for ISOMIP+ test case
    ln_rnf      =.true.,   !  runoffs                                   (T => fill namsbc_rnf)
    nn_lsm      = 0         !  =0 land/sea mask for input fields is not applied (keep empty land/sea mask filename field) ,
                            !  =1:n number of iterations of land/sea mask application for input fields (fill land/sea mask filename field)
@@ -184,9 +181,9 @@
    !!   
    !! Bulk transfer coefficients over sea-ice: (relevant IF: nn_ice >=1 )
    ln_Cx_ice_cst =.true.,     ! use constant ice-air bulk transfer coefficients (value given below)
-      rn_Cd_i  = 1.4e-3       ! sea-ice drag coefficient
-      rn_Ce_i  = 1.4e-3       !    "    sublimation coefficient
-      rn_Ch_i  = 1.4e-3       !    "    sensible heat flux coefficient
+      rn_Cd_ia  = 1.4e-3       ! sea-ice drag coefficient
+      rn_Ce_ia  = 1.4e-3       !    "    sublimation coefficient
+      rn_Ch_ia  = 1.4e-3       !    "    sensible heat flux coefficient
    ln_Cx_ice_frm =.false.,           ! use form drag param from Tsamadoes et al. 2014
       nn_frm = 2              !: = 1 : affects momentum and heat transfer coefficient
                               !:       for ocean-ice and atmos-ice (default)
@@ -323,7 +320,6 @@
    ln_tide     = XXX_TID_XXX,      ! Activate tides
       nn_tide_var   = 1          !  Variant of tidal parameter set and tide-potential computation
       !                          !     (1: default; 0: compatibility with previous versions)
-      ln_tide_dia   =.true.,    !  Enable tidal diagnostic output
       ln_tide_pot   =.true.,               !  use tidal potential forcing
          rn_tide_gamma = 0.7                   ! Tidal tilt factor
          ln_scal_load  =.false., ! suggested by JELT ! Use scalar approximation for
@@ -558,6 +554,7 @@
    ln_traadv_fct =.true., !  FCT scheme
       nn_fct_h   =  4            !  =2/4, horizontal 2nd / 4th order
       nn_fct_v   =  4            !  =2/4, vertical   2nd / COMPACT 4th order
+      nn_fct_imp =  2            !  =1/2, optimized / accurate treatment of implicit part
 /
 !-----------------------------------------------------------------------
 &namtra_ldf    !   lateral diffusion scheme for tracers                 (default: NO selection)
@@ -607,11 +604,11 @@
       !                             !   = 20 F(i,j)    =ldf_c2d
       !                             !   = 21 F(i,j,t)  =Treguier et al. JPO 1997 formulation
       !                             !   = 30 F(i,j,k)  =ldf_c2d * ldf_c1d
+      !                             !   = 32 F(i,j,t)  = GEOMETRIC parameterization        (=> fill namldf_eke)
       !                        !  time invariant coefficients:  aei0 = 1/2  Ue*Le
       rn_Ue        = 1.5          !  lateral diffusive velocity [m/s] (nn_aht_ijk_t= 0, 10, 20, 30)
       rn_Le        = 100.e+3        !  lateral diffusive length   [m]   (nn_aht_ijk_t= 0, 10)
       !
-      ln_ldfeiv_dia =.false.,   ! diagnose eiv stream function and velocities
 /
 !!======================================================================
 !!                      ***  Dynamics namelists  ***                  !!
@@ -643,7 +640,7 @@
    ln_dynadv_vec =.true., !  vector form - 2nd centered scheme
      nn_dynkeg     = 1        ! grad(KE) scheme: =0   C2  ;  =1   Hollingsworth correction
    ln_dynadv_cen2 =.false., !  flux form - 2nd order centered scheme
-   ln_dynadv_ubs =.false., ! JC .true. flux form - 3rd order UBS      scheme
+   ln_dynadv_up3 = .false. !  flux form - 3rd order UBS      scheme
 /
 !-----------------------------------------------------------------------
 &namdyn_vor    !   Vorticity / Coriolis scheme                          (default: NO selection)
@@ -654,7 +651,6 @@
 &namdyn_hpg    !   Hydrostatic pressure gradient option                 (default: NO selection)
 !-----------------------------------------------------------------------
    ln_hpg_zco  =.false.,   !  z-coordinate - full steps
-   ln_hpg_zps  =.false.,   !  z-coordinate - partial steps (interpolation)
    ln_hpg_sco  = XXX_SCO_XXX,   !  s-coordinate (standard jacobian formulation)
    ln_hpg_isf  =.false.,   !  s-coordinate (sco ) adapted to isf
    ln_hpg_djc  = XXX_DJC_XXX,   !  s-coordinate (Density Jacobian with Cubic polynomial)
@@ -666,11 +662,10 @@
 &namdyn_spg    !   surface pressure gradient                            (default: NO selection)
 !-----------------------------------------------------------------------
    ln_dynspg_ts   =.true.,   ! split-explicit free surface
-      ln_bt_fw      =.true.,     ! Forward integration of barotropic Eqs. !JC false
-      ln_bt_av      =.true.,     ! JC .false. Time filtering of barotropic variables
          nn_bt_flt     = 1          ! Time filter choice  = 0 None
          !                          !                     = 1 Boxcar over   nn_e sub-steps
          !                          !                     = 2 Boxcar over 2*nn_e  "    "
+         !                          !                     = 3 Temporal dissipation (Demange 2019)
       ln_bt_auto    = XXX_BTA_XXX,     ! Number of sub-step defined from:
          rn_bt_cmax   =  XXX_BTC_XXX ! =T : the Maximum Courant Number allowed
          nn_e         = 30          ! =F : the number of sub-step in rn_Dt seconds
@@ -895,10 +890,6 @@
    ln_trdmxl_restart = .false.         !  restart for ML diagnostics
    ln_trdmxl_instant = .true.         !  flag to diagnose trends of instantantaneous or mean ML T/S
    rn_rho_c = 0.01
-&namhsb        !  Heat and salt budgets                                 (default: OFF)
-!-----------------------------------------------------------------------
-   ln_diahsb   =.false.,   !  output the heat and salt budgets (T) or not (F)
-/
 !-----------------------------------------------------------------------
 &nam_diadct    !   transports through some sections                     (default: OFF)
 !-----------------------------------------------------------------------
@@ -923,7 +914,7 @@
    !                       !  setting nn_nchunks_k = jpk will give a chunk size of 1 in the vertical which
    !                       !  is optimal for postprocessing which works exclusively with horizontal slabs
    ln_nc4zip   =.true.,    !  (T) use netcdf4 chunking and compression
-   !                       !  (F) ignore chunking information and produce netcdf3-compatible files
+   !                       !  (F) ignore chunking and compression information (netcdf3 compatible file)
 /
 
 !!======================================================================

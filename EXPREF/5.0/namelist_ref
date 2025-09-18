@@ -40,7 +40,6 @@
    nn_time0    =       0   !  initial time of day in hhmm
    nn_leapy    =       0   !  Leap year calendar (1) or not (0)
    ln_rstart   = .false.   !  start from rest (F) or from a restart file (T)
-      ln_1st_euler = .false.  !  =T force a start with forward time step (ln_rstart=T)
       nn_rstctl    =    0     !  restart control ==> activated only if ln_rstart=T
       !                          !    = 0 nn_date0 read in namelist ; nn_it000 : read in namelist
       !                          !    = 1 nn_date0 read in namelist ; nn_it000 : check consistancy between namelist and restart
@@ -70,7 +69,6 @@
 &namdom        !   time and space domain
 !-----------------------------------------------------------------------
    rn_Dt       = 5400.     !  time step for the dynamics and tracer
-   rn_atfp     =    0.1    !  asselin time filter parameter
    !
    ln_c1d      = .false.   !  Single column domain (1x1pt)              (T => fill namc1d)
    !
@@ -428,7 +426,11 @@
    !                       !  RGB, 2BD & 5BD choices:
    rn_abs      =   0.58       !  RGB & 2BD: fraction absorbed in the very near surface
    rn_si0      =   0.35       !  RGB & 2BD: shortess depth of extinction
-   nn_chldta   =      0       !  RGB : 3D Chl data (=2), Surface Chl data (=1) or Cst value (=0)
+   nn_chldta   =      0       !  RGB & 5BD: cst value (=0) or Chl data (=1)
+      nn_chlprfl  =      1       !  Chl vertical profile (nn_chldta = 1)
+                                 !  0 = vertical extrapolation of surface data
+                                 !  1 = vertical analytical profile deduced from surface data
+                                 !  2 = 3D Chl data
    rn_si1      =   23.0       !  2BD : longest depth of extinction
    rn_par      =   0.47       !  5BD : fraction of photosynthetically active radiation
 
@@ -618,10 +620,13 @@
    !                          ! diagnostics:
    ln_bergdia        = .true.        ! Calculate budgets
    nn_verbose_level  = 0             ! Turn on more verbose output if level > 0
-   !
-   ! nn_verbose_write and nn_sample_rate need to be a multiple of nn_fsbc
-   nn_verbose_write  = 16            ! Timesteps between verbose messages
-   nn_sample_rate    = 16            ! Timesteps between sampling for trajectory storage
+   
+   !                          ! trajectories and verbose:
+   ! rn_verbose_write_days and rn_sample_rate_days can be decimals (ex 1.5) 
+   ! "0." is an allowed value, no trajectory and no verbose message will be written
+   ! except "-1", negative values are forbidden 
+   rn_verbose_write_days  = 2.0      ! Number of days between verbose messages (or every timestep if == -1)
+   rn_sample_rate_days    = 2.0      ! Number of days between sampling for trajectory storage (or every timestep if == -1)
    !
    !                          ! iceberg setting:
    !                                 ! Initial mass required for an iceberg of each class
@@ -640,16 +645,27 @@
    rn_bits_erosion_fraction = 0.     ! Fraction of erosion melt flux to divert to bergy bits
    rn_sicn_shift           = 0.      ! Shift of sea-ice concn in erosion flux (0<sicn_shift<1)
    ln_passive_mode         = .false. ! iceberg - ocean decoupling
-   nn_test_icebergs        =  10     ! Create test icebergs of this class (-1 = no)
-   !                                 ! Put a test iceberg at each gridpoint in box (lon1,lon2,lat1,lat2)
-   rn_test_box             = 108.0,  116.0, -66.0, -58.0
+   ln_use_test             = .false.  ! Use test icebergs, their number is specified by nn_test_icebergs
+      nn_test_icebergs        =  0    ! Create test icebergs of this class ( must be > 0 while using test icebergs)
+      !                               ! Put a test iceberg at each gridpoint in box (lon1,lon2,lat1,lat2) 
+      rn_test_box             = 108.0,  116.0, -66.0, -58.0  ! Put a test iceberg at each gridpoint in box (lon1,lon2,lat1,lat2)
+ 
    ln_use_calving          = .false. ! Use calving data even when nn_test_icebergs > 0
    rn_speed_limit          = 0.      ! CFL speed limit for a berg (safe value is 0.4, see #2581)
    !
    ln_M2016                = .false. ! use Merino et al. (2016) modification (use of 3d ocean data instead of only sea surface data)
       ln_icb_grd           = .false. ! ground icb when icb bottom level hit oce bottom level (need ln_M2016 to be activated)
    !
+   ln_icb_bas   = .false.  ! activate diagnostics by basin
+      cn_icbbasins_file       = 'icbbasinid.nc' ! file defining the basin location
+      cn_icbbasins_var2d      = 'basinid'       ! basin id map
+      cn_icbbasins_var1d      = 'basins'        ! variable to define the dimension variable in the output (correspondance between basin index and basin id)
+      nn_icb_basins           = 20              ! number of basin (in the netcdf file)
+      ln_rst_test_bas         = .false.         ! is there test iceberg in the restart (ie generated with nn_test_icebergs > -1)
+   !
    cn_dir      = './'      !  root directory for the calving data location
+   !
+   ! ln_use_calving = .true. required an input file (sn_icb). The unit of the variable 'calvingmask' is kg/s.
    !___________!_________________________!___________________!___________!_____________!________!___________!__________________!__________!_______________!
    !           !  file name              ! frequency (hours) ! variable  ! time interp.!  clim  ! 'yearly'/ ! weights filename ! rotation ! land/sea mask !
    !           !                         !  (if <0  months)  !   name    !   (logical) !  (T/F) ! 'monthly' !                  ! pairing  !    filename   !
@@ -979,11 +995,11 @@
 !----------------------------------------------------------------------------------
 &namldf_eke !   GEOMETRIC param. (total EKE equation)                           (nn_aei_ijk_t = 32)
 !----------------------------------------------------------------------------------
-   rn_ekedis      =  100.      ! dissipation time scale of EKE [days] (orca2 reference value)
+   rn_ekedis      =  100.      ! dissipation time scale of EKE [days] (default: orca2 value)
       nn_eke_dis  =    0       ! dissipation option
       !                             !   =  0  constant in space
       !                             !   =-20  read in geom_diss_2D.nc file
-   rn_geom        =  0.06      ! geometric parameterization master coefficient (>0 & <1) (orca2 reference value)
+   rn_geom        =  0.06      ! geometric parameterization master coefficient (>0 & <1)  (default: orca2 value)
    rn_eke_init    =  1.e-1     ! initial total EKE value
    rn_eke_min     =  1.e+0     ! background value of total EKE
    rn_ross_min    =  4.e+3     ! tapering of aeiv based on min Rossby radius [m]
@@ -1058,7 +1074,6 @@
 !-----------------------------------------------------------------------
    ln_dynvor_ene = .false. !  energy    conserving scheme
    ln_dynvor_ens = .false. !  enstrophy conserving scheme
-   ln_dynvor_mix = .false. !  mixed scheme
    ln_dynvor_enT = .false. !  energy conserving scheme (T-point)
    ln_dynvor_een = .false. !  energy & enstrophy scheme
    !
@@ -1084,7 +1099,6 @@
 !-----------------------------------------------------------------------
    ln_dynspg_exp  = .false.   ! explicit free surface
    ln_dynspg_ts   = .false.   ! split-explicit free surface
-      ln_bt_fw      = .true.     ! Forward integration of barotropic Eqs.
       nn_bt_flt     = 1          ! Add dissipation with either boxcar averaging or dissipative Forward-Backward
       !                          !                     = 0 None
       !                          !                     = 1 Boxcar over   nn_e sub-steps
