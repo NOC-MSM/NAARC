@@ -263,7 +263,7 @@ CONTAINS
             IF(lwp) WRITE(numout,*) '      No modification of shlat for straits'
          ENDIF
          CALL iom_close( inum )
-      ELSEIF ( .not. ln_shlat2d ) THEN     !==  User defined configuration  ==!          ! Only call if we are not using the shlat2d option.
+      ELSE                          !==  User defined configuration  ==!       
          IF(lwp) WRITE(numout,*)
          IF(lwp) WRITE(numout,*) '         User defined shlat for straits'
          CALL usr_def_fmask( cn_cfg, nn_cfg, fmask )
