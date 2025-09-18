@@ -141,12 +141,12 @@ CONTAINS
          SELECT CASE( ktrd*i01 )
          !                            ! advection: transform the advective flux into a trend
          !                            !            and send T & S trends to trd_tra_mng
-         CASE( jptra_xad  )   ;   CALL trd_tra_adv( ptrd , pu  , ptra, 'X'  , ztrds, Kmm, Krhs ) 
-                                  CALL trd_tra_mng( trdtx, ztrds, ktrd, kt, Kmm   )
-         CASE( jptra_yad  )   ;   CALL trd_tra_adv( ptrd , pu  , ptra, 'Y'  , ztrds, Kmm, Krhs ) 
-                                  CALL trd_tra_mng( trdty, ztrds, ktrd, kt, Kmm   )
-         CASE( jptra_zad  )   ;   CALL trd_tra_adv( ptrd , pu  , ptra, 'Z'  , ztrds, Kmm, Krhs ) 
-                                  CALL trd_tra_mng( trdt , ztrds, ktrd, kt, Kmm   )
+         CASE( jptra_xad  )   ;   CALL trd_tra_adv( ptrd , pu  , ptra, 'X'  , ztrds, Kmm) 
+                                  CALL trd_tra_mng( trdtx, ztrds, ktrd, kt, Kmm, Krhs )
+         CASE( jptra_yad  )   ;   CALL trd_tra_adv( ptrd , pu  , ptra, 'Y'  , ztrds, Kmm ) 
+                                  CALL trd_tra_mng( trdty, ztrds, ktrd, kt, Kmm, Krhs )
+         CASE( jptra_zad  )   ;   CALL trd_tra_adv( ptrd , pu  , ptra, 'Z'  , ztrds, Kmm ) 
+                                  CALL trd_tra_mng( trdt , ztrds, ktrd, kt, Kmm, Krhs )
          CASE( jptra_zdfp )           ! diagnose the "PURE" Kz trend (here: just before the swap)
             !                         ! iso-neutral diffusion case otherwise jptra_zdf is "PURE"
             ALLOCATE( zwt(T2D(0),jpk), zws(T2D(0),jpk), ztrdt(T2D(0),jpk) )

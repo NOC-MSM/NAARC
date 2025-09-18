@@ -130,4 +130,19 @@ trdini.F90. Done.
 dynspg_ts.F90 updated changes from 4.2.2 MY_SRC.
 iceupdate.F90 zrhoco was not present in v5, no changes.
 
+Tried compiling without Momentum bits first. Error:
+/work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/trdtra.f90:164:97:
+
+  164 |          CASE( jptra_xad  )   ;   CALL trd_tra_adv( ptrd , pu  , ptra, 'X'  , ztrds, Kmm, Krhs )
+      |                                                                                                 1
+Error: More actual than formal arguments in procedure call at (1)
+/work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/trdtra.f90:165:83:
+
+  165 |                                   CALL trd_tra_mng( trdtx, ztrds, ktrd, kt, Kmm   )
+      |                                                                                   1
+Error: Missing actual argument for argument 'krhs' at (1)
+
+Changed trdtra.F90 in MY_SRC (I'd added the Krhs arg to the wrong function).
+
+
 
