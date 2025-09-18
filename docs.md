@@ -127,7 +127,7 @@ dynzdf.F90 Didn't need updating, no changes.
 sbcmod.F90 Didn't need updating, no changes.
 trddyn.F90 Didn't need updating, no changes.
 trdini.F90. Done.
-dynspg_ts.F90 no changed, zt0substep looks different in v5 and l_trddyn not present before change.
+dynspg_ts.F90 updated changes from 4.2.2 MY_SRC.
 iceupdate.F90 zrhoco was not present in v5, no changes.
 
 
