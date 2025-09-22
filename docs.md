@@ -152,4 +152,8 @@ misspelled variable in namelist namsbc_blk (cfg) iostat =  5010
 rn_tide_ramp_dt must be lower than run duration
 
 Tried again at updating the namelist and namelist_ice from 4.2.2 to 5.0
-I've set nn_fct_imp =  2 because nn_fct_h and nn_ft_v = 4 which is non-default
+I've set nn_fct_imp =  2 (default is 1) because nn_fct_h and nn_ft_v = 4 which is non-default
+
+In namelist_ref namrun, added ln_rstdate=XXX_RSD_XXX and ln_reset_ts=.false. to namelist_ref
+In namelist_cfg_template namsbc_blk, changed csw, csa, cra, crw, cfa, cfw to rn_Cs_io, rn_Cs_ia, rn_Cr_ia, rn_Cr_io, rn_Cf_ia, rn_Cf_io
+
