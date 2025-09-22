@@ -192,12 +192,12 @@
                               !: = 3 : affect momentum and heat transfer coefficient (atmos-ice),
                               !:       but only momentum transfer coefficient (ocean-ice)
       rn_frm_ht0 = 20.0       !: only apply form drag in ocean deeper than rn_frm_ht0 else use ln_Cx_ice_cst
-      csw      = 0.002        ! ice-ocn skin drag [0.0005,0.005]
-      csa      = 0.0005       ! ice-air skin drag [0.0001,0.001]
-      cra      = 0.2          ! local form drag coefficient [0,1]
-      crw      = 0.2          ! local form drag coefficient [0,1]
-      cfa      = 0.2          ! floe edge atm [0,1]
-      cfw      = 0.2          ! floe edge ocean [0,1]
+      rn_Cs_io = 0.002        ! ice-ocn skin drag [0.0005,0.005]
+      rn_Cs_ia = 0.0005       ! ice-air skin drag [0.0001,0.001]
+      rn_Cr_ia = 0.2          ! ridge/keel drag coefficient [0,1]
+      rn_Cr_io = 0.2          ! ridge/keel drag coefficient [0,1]
+      rn_Cf_ia = 0.2          ! floe edge atm [0,1]
+      rn_Cf_io = 0.2          ! floe edge ocean [0,1]
    ln_Cx_ice_AN05  =.false.,  !  (Andreas et al. 2005)
    ln_Cx_ice_LU12  =.false.,  !  (Lupkes et al. 2012)
    ln_Cx_ice_LG15  =.false.,  !  (Lupkes & Gryanik 2015)
