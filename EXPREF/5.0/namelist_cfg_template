@@ -191,7 +191,6 @@
                               !:       for ocean-ice and atmos-ice
                               !: = 3 : affect momentum and heat transfer coefficient (atmos-ice),
                               !:       but only momentum transfer coefficient (ocean-ice)
-      rn_frm_ht0 = 20.0       !: only apply form drag in ocean deeper than rn_frm_ht0 else use ln_Cx_ice_cst
       rn_Cs_io = 0.002        ! ice-ocn skin drag [0.0005,0.005]
       rn_Cs_ia = 0.0005       ! ice-air skin drag [0.0001,0.001]
       rn_Cr_ia = 0.2          ! ridge/keel drag coefficient [0,1]
