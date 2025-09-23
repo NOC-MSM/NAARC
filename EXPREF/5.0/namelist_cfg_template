@@ -554,7 +554,6 @@
    ln_traadv_fct =.true., !  FCT scheme
       nn_fct_h   =  4            !  =2/4, horizontal 2nd / 4th order
       nn_fct_v   =  4            !  =2/4, vertical   2nd / COMPACT 4th order
-      nn_fct_imp =  2            !  =1/2, optimized / accurate treatment of implicit part
 /
 !-----------------------------------------------------------------------
 &namtra_ldf    !   lateral diffusion scheme for tracers                 (default: NO selection)
