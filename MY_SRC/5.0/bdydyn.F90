@@ -22,6 +22,8 @@ MODULE bdydyn
    USE bdydyn3d        ! open boundary conditions for baroclinic velocities
    USE lbclnk          ! ocean lateral boundary conditions (or mpp link)
    USE in_out_manager  !
+   USE trd_oce        ! trends: ocean variables
+   USE trddyn         ! trend manager: dynamics
 
    IMPLICIT NONE
    PRIVATE
@@ -50,7 +52,9 @@ CONTAINS
       !
       INTEGER ::   jk, ii, ij, ib_bdy, ib, igrd     ! Loop counter
       LOGICAL ::   ll_dyn2d, ll_dyn3d, ll_orlanski
+      REAL(wp), ALLOCATABLE,       DIMENSION(:,:,:) ::   ua_tmp, va_tmp     ! RDP: temporary save of 2d momentum
       REAL(wp), DIMENSION(jpi,jpj) :: zua2d, zva2d     ! after barotropic velocities
+      REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) :: zbdytrdu, zbdytrdv  ! bdy trends
       !!----------------------------------------------------------------------
       !
       ll_dyn2d = .true.
@@ -58,6 +62,14 @@ CONTAINS
       !
       IF( PRESENT(dyn3d_only) ) THEN
          IF( dyn3d_only )   ll_dyn2d = .false.
+      ENDIF
+      !
+      IF ( l_trddyn ) THEN
+         IF ( ll_dyn3d ) THEN
+             ALLOCATE( zbdytrdu(jpi,jpj,jpk), zbdytrdv(jpi,jpj,jpk) )
+             zbdytrdu(:,:,:) = 0._wp
+             zbdytrdv(:,:,:) = 0._wp
+         ENDIF
       ENDIF
       !
       ll_orlanski = .false.
