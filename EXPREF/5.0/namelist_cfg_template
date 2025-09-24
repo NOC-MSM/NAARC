@@ -42,6 +42,7 @@
    nn_time0    =       0000   !  initial time of day in hhmm
    nn_leapy    =       1   !  Leap year calendar (1) or not (0)
    ln_rstart   = XXX_RST_XXX,   !  start from rest (F) or from a restart file (T)
+      ln_1st_euler =.false.,  !  =T force a start with forward time step (ln_rstart=T)
       nn_rstctl    = 2   !  restart control ==> activated only if ln_rstart=T
       !                          !    = 0 nn_date0 read in namelist ; nn_it000 : read in namelist
       !                          !    = 1 nn_date0 read in namelist ; nn_it000 : check consistancy between namelist and restart
@@ -65,6 +66,7 @@
 &namdom        !   time and space domain
 !-----------------------------------------------------------------------
    rn_Dt       = XXX_RDT_XXX     !  time step for the dynamics and tracer
+   rn_atfp     =    0.05,    !  asselin time filter parameter
    !
    ln_c1d      =.false.,   !  Single column domain (1x1pt)              (T => fill namc1d)
    !
@@ -455,12 +457,6 @@
    filtide          = './INPUTS/NAARC_NP/NAARC_bdytide_FES2014_'   !  file name root of tidal forcing files
    ln_bdytide_2ddta = .false.,                   !
 /
-!-----------------------------------------------------------------------
-&nambdy_tide   !  tidal forcing at open boundaries                      (default: OFF)
-!-----------------------------------------------------------------------
-   filtide          = './INPUTS/NAARC_NA/NAARC_bdytide_FES2014_'   !  file name root of tidal forcing files
-   ln_bdytide_2ddta = .false.,                   !
-/
 !!======================================================================
 !!                ***  Top/Bottom boundary condition  ***             !!
 !!                                                                    !!
@@ -660,6 +656,7 @@
 &namdyn_spg    !   surface pressure gradient                            (default: NO selection)
 !-----------------------------------------------------------------------
    ln_dynspg_ts   =.true.,   ! split-explicit free surface
+         ln_bt_fw      =.true.,     ! Forward integration of barotropic Eqs. !JC false
          nn_bt_flt     = 1          ! Time filter choice  = 0 None
          !                          !                     = 1 Boxcar over   nn_e sub-steps
          !                          !                     = 2 Boxcar over 2*nn_e  "    "
