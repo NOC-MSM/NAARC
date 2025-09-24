@@ -234,7 +234,8 @@ CONTAINS
       !!----------------------------------------------------------------------
       !
       NAMELIST/namrun/ cn_ocerst_indir, cn_ocerst_outdir, nn_stocklist, ln_rst_list,                 &
-         &             nn_no   , cn_exp   , cn_ocerst_in, cn_ocerst_out, ln_rstart , ln_reset_ts ,     &
+         &             nn_no   , cn_exp   , cn_ocerst_in, cn_ocerst_out, ln_rstart , ln_reset_ts ,   &
+         &             nn_rstctl ,                                                                   &
          &             nn_it000, nn_itend , nn_date0    , nn_time0     , nn_leapy  , nn_istate ,     &
          &             nn_stock, nn_write , ln_mskland  , ln_clobber   , nn_chunksz, ln_1st_euler  , &
          &             ln_cfmeta, ln_xios_read, nn_wxios, ln_top, ln_rstdate, ln_rst_eos
