@@ -183,8 +183,12 @@ Tired adding ln_1st_euler back in to both namelists but it didn't change the err
 ln_rst_eos in domain.F90, in_out_manager.F90, restart.F90
 ln_1st_euler is in v5 namelist_ref on gitlab but not in the nemo_v5 folder locally. 
 
-I've been comparing with nemo-main instead of nemo v5 so I need to check everything again. 
+I've been comparing with nemo-main instead of nemo v5 so I need to check everything again. When making comparison get two tkdiff windows up. One with src v4.2.2 to src v5.0 and one with MY_SRC v4.2.2 to MY_SRC v5.0.
 
 Done:
 namelist_cfg_template, namelist_ref, namelist_ice_cfg_template, namelist_ice_ref
-
+Done:
+bdydyn.F90, diahth.F90, diawri.F90, domain.F90, dommsk.F90, dtatsd.F90, dynatf_qco.F90, fldread.F90, icerst.F90, in_out_manager.F90, istate.F90, nemogcm.F90, restart.F90, sbc_oce.F90, sbcblk.F90
+dynspg_ts.F90 - not sure "IF( l_trddyn ) THEN" bit line 963 4.2.2 MY_SRC, should be in the if loop next to pvv_b
+MY_SRC only:
+diapea.F90
