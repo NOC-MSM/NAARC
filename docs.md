@@ -151,9 +151,40 @@ misspelled variable in namelist namrun (cfg) iostat =  5010
 misspelled variable in namelist namsbc_blk (cfg) iostat =  5010
 rn_tide_ramp_dt must be lower than run duration
 
-Tried again at updating the namelist and namelist_ice from 4.2.2 to 5.0
+Tried again at updating the namelist and namelist_ice from 4.2.2 to 5.0, I think I did it wrong before.
 I've set nn_fct_imp =  2 (default is 1) because nn_fct_h and nn_ft_v = 4 which is non-default
+nn_fct_imp left out of namelist_cfg_template
 
 In namelist_ref namrun, added ln_rstdate=XXX_RSD_XXX and ln_reset_ts=.false. to namelist_ref
 In namelist_cfg_template namsbc_blk, changed csw, csa, cra, crw, cfa, cfw to rn_Cs_io, rn_Cs_ia, rn_Cr_ia, rn_Cr_io, rn_Cf_ia, rn_Cf_io
+
+Run Errors:
+misspelled variable in namelist namrun (ref) iostat =  5010
+misspelled variable in namelist namrun (ref) iostat =  5010
+misspelled variable in namelist namsbc_blk (cfg) iostat =  5010
+rn_tide_ramp_dt must be lower than run duration
+nemo_gcm: a total of            1  errors have been found
+
+The nemo_gcm error is because of rn_tide_ramp_dt. Tide has been turned off in the runscript.slurm for now.
+
+Run Errors:
+misspelled variable in namelist namrun (ref) iostat =  5010
+misspelled variable in namelist namrun (ref) iostat =  5010
+misspelled variable in namelist namsbc_blk (cfg) iostat =  5010
+
+rn_frm_ht0 was left out of the v5 namelist_cfg_template because ice form drag is included in nemo v5. This means the ice\*.F90 files probably won't need to be carried over in MY_SRC
+nn_hls is another one to come back to because the default ahs changes from 1 to 2.
+
+Run Errors:
+misspelled variable in namelist namrun (ref) iostat =  5010
+misspelled variable in namelist namrun (ref) iostat =  5010
+
+Tired adding ln_1st_euler back in to both namelists but it didn't change the errors. ln_1st_euler in domain.F90 and istate.F90
+ln_rst_eos in domain.F90, in_out_manager.F90, restart.F90
+ln_1st_euler is in v5 namelist_ref on gitlab but not in the nemo_v5 folder locally. 
+
+I've been comparing with nemo-main instead of nemo v5 so I need to check everything again. 
+
+Done:
+namelist_cfg_template, namelist_ref, namelist_ice_cfg_template, namelist_ice_ref
 
