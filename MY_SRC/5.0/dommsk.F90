@@ -248,6 +248,7 @@ CONTAINS
       ENDIF
       
       ! User defined alteration of fmask (use to reduce ocean transport in specified straits)
+      ! Only call if we are not using the shlat2d option.
       ! -------------------------------- 
       !
       IF( ln_read_cfg ) THEN        !==  read in domcfg file  ==!
