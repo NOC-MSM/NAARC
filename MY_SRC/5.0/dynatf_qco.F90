@@ -32,11 +32,6 @@ MODULE dynatf_qco
    USE phycst         ! physical constants
    USE dynadv         ! dynamics: vector invariant versus flux form
    USE dynspg_ts      ! surface pressure gradient: split-explicit scheme
-   USE domvvl         ! variable volume
-   USE bdy_oce   , ONLY: ln_bdy
-   USE bdydta         ! ocean open boundary conditions
-   USE bdydyn         ! ocean open boundary conditions
-   USE bdyvol         ! ocean open boundary condition (bdy_vol routines)
    USE trd_oce        ! trends: ocean variables
    USE trddyn         ! trend manager: dynamics
    USE trdken         ! trend manager: kinetic energy
@@ -60,8 +55,7 @@ MODULE dynatf_qco
 #  include "do_loop_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
-   !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: dynatf_qco.F90 14834 2021-05-11 09:24:44Z hadcv $
+   !! NEMO/OCE 5.0, NEMO Consortium (2024)
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
 CONTAINS
@@ -78,9 +72,7 @@ CONTAINS
       !!             estimate (ln_dynspg_ts=T)
       !!
       !!              * Apply lateral boundary conditions on after velocity
-      !!             at the local domain boundaries through lbc_lnk call,
-      !!             at the one-way open boundaries (ln_bdy=T),
-      !!             at the AGRIF zoom   boundaries (lk_agrif=T)
+      !!             at the local domain boundaries through lbc_lnk call
       !!
       !!              * Apply the Asselin time filter to the now fields
       !!             arrays to start the next time step:
@@ -94,19 +86,25 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT(in   ) :: kt               ! ocean time-step index
       INTEGER                             , INTENT(in   ) :: Kbb, Kmm, Kaa    ! before and after time level indices
-      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) :: puu, pvv         ! velocities to be time filtered
+      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) :: puu, pvv         ! velocities to be time filtered
       !
       INTEGER  ::   ji, jj, jk   ! dummy loop indices
       REAL(wp) ::   zue3a, zue3n, zue3b, zcoef    ! local scalars
       REAL(wp) ::   zve3a, zve3n, zve3b           !   -      -
+#if ! defined key_PSYCLONE_2p5p0
       REAL(wp), ALLOCATABLE, DIMENSION(:,:)   ::   zue, zve
-      REAL(dp), ALLOCATABLE, DIMENSION(:,:,:) ::   zua, zva
+#else
+      REAL(wp), DIMENSION(jpi,jpj)            ::   zue, zve
+#endif
+      REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) ::   zua, zva
       REAL(wp), ALLOCATABLE, DIMENSION(:,:)   ::   zutau, zvtau
       !!----------------------------------------------------------------------
       !
       IF( ln_timing    )   CALL timing_start('dyn_atf_qco')
-      IF( ln_dynspg_ts )   ALLOCATE( zue(jpi,jpj)     , zve(jpi,jpj)     )
-      IF( l_trddyn     )   ALLOCATE( zua(jpi,jpj,jpk) , zva(jpi,jpj,jpk) )
+#if ! defined key_PSYCLONE_2p5p0
+      IF( ln_dynspg_ts )   ALLOCATE( zue(jpi,jpj)   , zve(jpi,jpj)    )
+#endif
+      IF( l_trddyn     )   ALLOCATE( zua(T2D(0),jpk), zva(T2D(0),jpk) )
       !
       IF( kt == nit000 ) THEN
          IF(lwp) WRITE(numout,*)
@@ -117,16 +115,20 @@ CONTAINS
       IF( l_trddyn ) THEN             ! prepare the atf trend computation + some diagnostics
          !
          !                                  ! Kinetic energy and Conversion
-         IF( ln_KE_trd  )   CALL trd_dyn( puu(:,:,:,Kaa), pvv(:,:,:,Kaa), jpdyn_ken, kt, Kmm )
+         IF( ln_KE_trd  ) THEN
+            zua(:,:,:) = puu(T2D(0),:,Kaa)
+            zva(:,:,:) = pvv(T2D(0),:,Kaa)
+            CALL trd_dyn( zua(:,:,:), zva(:,:,:), jpdyn_ken, kt, Kmm )
+         ENDIF
          !
          IF( ln_dyn_trd ) THEN              ! 3D output: total momentum trends
-            zua(:,:,:) = ( puu(:,:,:,Kaa) - puu(:,:,:,Kbb) ) * r1_Dt
-            zva(:,:,:) = ( pvv(:,:,:,Kaa) - pvv(:,:,:,Kbb) ) * r1_Dt
+            zua(:,:,:) = ( puu(T2D(0),:,Kaa) - puu(T2D(0),:,Kbb) ) * r1_Dt
+            zva(:,:,:) = ( pvv(T2D(0),:,Kaa) - pvv(T2D(0),:,Kbb) ) * r1_Dt
             CALL trd_dyn( zua, zva, jpdyn_tot, kt, Kmm, Kaa )  ! total momentum trends, except the asselin time filter
          ENDIF
          !
-         zua(:,:,:) = puu(:,:,:,Kmm)             ! save the now velocity before the asselin filter
-         zva(:,:,:) = pvv(:,:,:,Kmm)             ! (caution: there will be a shift by 1 timestep in the
+         zua(:,:,:) = puu(T2D(0),:,Kmm)     ! save the now velocity before the asselin filter
+         zva(:,:,:) = pvv(T2D(0),:,Kmm)     ! (caution: there will be a shift by 1 timestep in the
          !                                  !  computation of the asselin filter trends)
       ENDIF
 
@@ -135,7 +137,7 @@ CONTAINS
 
       IF( .NOT. l_1st_euler ) THEN    !* Leap-Frog : Asselin time filter
          !                                ! =============!
-         IF( ln_linssh ) THEN             ! Fixed volume !
+         IF( lk_linssh ) THEN             ! Fixed volume !
             !                             ! =============!
             DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpkm1 )
                puu(ji,jj,jk,Kmm) = puu(ji,jj,jk,Kmm) + rn_atfp * ( puu(ji,jj,jk,Kbb) - 2._wp * puu(ji,jj,jk,Kmm) + puu(ji,jj,jk,Kaa) )
@@ -194,7 +196,7 @@ CONTAINS
       ENDIF ! .NOT. l_1st_euler
       !
       ! This is needed for dyn_ldf_blp to be restartable
-      IF( nn_hls == 2 ) CALL lbc_lnk( 'dynatfqco', puu(:,:,:,Kmm), 'U', -1.0_dp, pvv(:,:,:,Kmm), 'V', -1.0_dp )
+      CALL lbc_lnk( 'dynatfqco', puu(:,:,:,Kmm), 'U', -1.0_wp, pvv(:,:,:,Kmm), 'V', -1.0_wp )
 
       ! Set "now" and "before" barotropic velocities for next time step:
       ! JC: Would be more clever to swap variables than to make a full vertical
@@ -237,17 +239,18 @@ CONTAINS
          CALL iom_put(  "vbar", vv_b(:,:,Kmm) )
       ENDIF
       IF( l_trddyn ) THEN                ! 3D output: asselin filter trends on momentum
-         zua(:,:,:) = ( puu(:,:,:,Kmm) - zua(:,:,:) ) * r1_Dt
-         zva(:,:,:) = ( pvv(:,:,:,Kmm) - zva(:,:,:) ) * r1_Dt
+         zua(:,:,:) = ( puu(T2D(0),:,Kmm) - zua(:,:,:) ) * r1_Dt
+         zva(:,:,:) = ( pvv(T2D(0),:,Kmm) - zva(:,:,:) ) * r1_Dt
          CALL trd_dyn( zua, zva, jpdyn_atf, kt, Kmm )
       ENDIF
       !
       IF ( iom_use("utau") ) THEN
          IF ( ln_drgice_imp.OR.ln_isfcav ) THEN
-            ALLOCATE(zutau(jpi,jpj))
+            ! TEMP: Declared with halo points so there is a consistent shape for XIOS
+            ALLOCATE(zutau(A2D(nn_hls)))
             DO_2D( 0, 0, 0, 0 )
                jk = miku(ji,jj)
-               zutau(ji,jj) = utau(ji,jj) + 0.5_wp * rho0 * ( rCdU_top(ji+1,jj)+rCdU_top(ji,jj) ) * puu(ji,jj,jk,Kaa)
+               zutau(ji,jj) = utau(ji,jj) + 0.5_wp * rho0 * rCdU_top(ji,jj) * ( puu(ji-1,jj,jk,Kaa) + puu(ji,jj,jk,Kaa) )
             END_2D
             CALL iom_put(  "utau", zutau(:,:) )
             DEALLOCATE(zutau)
@@ -258,10 +261,11 @@ CONTAINS
       !
       IF ( iom_use("vtau") ) THEN
          IF ( ln_drgice_imp.OR.ln_isfcav ) THEN
-            ALLOCATE(zvtau(jpi,jpj))
+            ! TEMP: Declared with halo points so there is a consistent shape for XIOS
+            ALLOCATE(zvtau(A2D(nn_hls)))
             DO_2D( 0, 0, 0, 0 )
                jk = mikv(ji,jj)
-               zvtau(ji,jj) = vtau(ji,jj) + 0.5_wp * rho0 * ( rCdU_top(ji,jj+1)+rCdU_top(ji,jj) ) * pvv(ji,jj,jk,Kaa)
+               zvtau(ji,jj) = vtau(ji,jj) + 0.5_wp * rho0 * rCdU_top(ji,jj) * ( pvv(ji,jj-1,jk,Kaa) + pvv(ji,jj,jk,Kaa) )
             END_2D
             CALL iom_put(  "vtau", zvtau(:,:) )
             DEALLOCATE(zvtau)
@@ -273,7 +277,9 @@ CONTAINS
       IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab3d_1=puu(:,:,:,Kaa), clinfo1=' nxt  - puu(:,:,:,Kaa): ', mask1=umask,   &
          &                                  tab3d_2=pvv(:,:,:,Kaa), clinfo2=' pvv(:,:,:,Kaa): '       , mask2=vmask )
       !
+#if ! defined key_PSYCLONE_2p5p0
       IF( ln_dynspg_ts )   DEALLOCATE( zue, zve )
+#endif
       IF( l_trddyn     )   DEALLOCATE( zua, zva )
       IF( ln_timing    )   CALL timing_stop('dyn_atf_qco')
       !
