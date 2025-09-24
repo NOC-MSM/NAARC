@@ -28,11 +28,11 @@ MODULE dtatsd
    PRIVATE
 
    PUBLIC   dta_tsd_init   ! called by opa.F90
-   LOGICAL , PUBLIC ::   ln_tsd_interp !: vertical interpolation flag
    PUBLIC   dta_tsd        ! called by istate.F90 and tradmp.90
 
    !                                  !!* namtsd  namelist : Temperature & Salinity Data *
    LOGICAL , PUBLIC ::   ln_tsd_init   !: T & S data flag
+   LOGICAL , PUBLIC ::   ln_tsd_interp !: vertical interpolation flag
    LOGICAL , PUBLIC ::   ln_tsd_dmp    !: internal damping toward input data flag
    INTEGER, PARAMETER ::   jp_dep = 3    !: indice for depth
    INTEGER, PARAMETER ::   jp_msk = 4    !: indice for mask
@@ -101,13 +101,13 @@ CONTAINS
             &           'we keep the restart T & S values and set ln_tsd_init to FALSE' )
          ln_tsd_init = .FALSE.
       ENDIF
-      !
       IF( ln_tsd_interp .AND. ln_tsd_dmp ) THEN
             CALL ctl_stop( 'dta_tsd_init: Tracer damping and vertical interpolation not yet configured' )   ;   RETURN
       ENDIF
       IF( ln_tsd_interp .AND. LEN(TRIM(sn_msk%wname)) > 0 ) THEN
             CALL ctl_stop( 'dta_tsd_init: Using vertical interpolation and weights files not recommended' )   ;   RETURN
       ENDIF
+      !
       !                             ! allocate the arrays (if necessary)
       IF( ln_tsd_init .OR. ln_tsd_dmp .OR. ln_reset_ts ) THEN
          !
