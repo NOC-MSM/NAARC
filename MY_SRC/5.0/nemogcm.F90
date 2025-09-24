@@ -311,7 +311,7 @@ CONTAINS
       IF( lwm )   CALL ctl_opn(     numond, 'output.namelist.dyn', 'REPLACE', 'FORMATTED', 'SEQUENTIAL', -1, -1, .FALSE. )
       ! open /dev/null file to be able to supress output write easily
       IF( Agrif_Root() ) THEN
-                  CALL ctl_opn(     numnul,           '/dev/null', 'REPLACE', 'FORMATTED', 'SEQUENTIAL', -1, -1, .FALSE. )
+                  CALL ctl_opn(     numnul,           '/dev/null', 'UNKNOWN', 'FORMATTED', 'SEQUENTIAL', -1, -1, .FALSE. )
 #ifdef key_agrif
       ELSE
                   numnul = Agrif_Parent(numnul)
