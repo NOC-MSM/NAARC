@@ -10,6 +10,7 @@ MODULE trdini
    !!   trd_init      : initialization step
    !!----------------------------------------------------------------------
    USE dom_oce        ! ocean domain
+   USE sbc_oce        ! for sea ice flag and ice-ocean stresses
    USE domtile        ! tiling utilities
    USE trd_oce        ! trends: ocean variables
    USE trdken         ! trends: 3D kinetic   energy
@@ -81,6 +82,9 @@ CONTAINS
       IF( l_trdtra .OR. l_trddyn .OR. l_trdtrc ) THEN
          CALL ctl_warn('The trends diagnostics are a work in progress: they are not yet fully tested or functional')
       ENDIF
+      ! Allocate (partial) ice-ocean stresses (only used for dynamics trends diagnostics). 
+      IF( l_trddyn .and. nn_ice == 2 ) ALLOCATE( uiceoc(jpi,jpj), uiceoc_b(jpi,jpj), &
+                                                 viceoc(jpi,jpj), viceoc_b(jpi,jpj) )
 
 !!gm check the stop below
       IF( ln_dyn_mxl )   CALL ctl_stop( 'ML diag on momentum are not yet coded we stop' )
@@ -98,6 +102,8 @@ CONTAINS
          CALL dom_tile_init
       ENDIF
 
+!!RDP : The below comments are potentially outdated. It is thought that flux form is now also permissable.
+!!RDP : Though, this needs to be verified.
 !!gm  : Potential BUG : 3D output only for vector invariant form!  add a ctl_stop or code the flux form case
 !!gm  : bug/pb for vertical advection of tracer in vvl case: add T.dt[eta] in the output...
 
