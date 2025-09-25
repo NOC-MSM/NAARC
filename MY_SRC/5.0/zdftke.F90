@@ -117,7 +117,7 @@ CONTAINS
    END FUNCTION zdf_tke_alloc
 
 
-   SUBROUTINE zdf_tke( kt, Kbb, Kaa, p_sh2, p_avm, p_avt )
+   SUBROUTINE zdf_tke( kt, Kbb, Kmm, p_sh2, p_avm, p_avt )
       !!----------------------------------------------------------------------
       !!                   ***  ROUTINE zdf_tke  ***
       !!
@@ -163,7 +163,7 @@ CONTAINS
       !!              Bruchard OM 2002
       !!----------------------------------------------------------------------
       INTEGER                         , INTENT(in   ) ::   kt             ! ocean time step
-      INTEGER                         , INTENT(in   ) ::   Kbb, Kaa       ! ocean time level indices
+      INTEGER                         , INTENT(in   ) ::   Kbb, Kmm       ! ocean time level indices
       REAL(wp), DIMENSION(A2D(0) ,jpk), INTENT(in   ) ::   p_sh2          ! shear production term
       REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   p_avm          ! vertical eddy viscosity (w-points)
       REAL(wp), DIMENSION(A2D(0) ,jpk), INTENT(inout) ::   p_avt          ! vertical eddy diffusivity (w-points)
@@ -179,9 +179,9 @@ CONTAINS
       IF( nn_pdl == 1 ) ALLOCATE( z_pdlr(T2D(0),jpk) )        ! avt multiplied by the inverse Prandtl number
 #endif
       !
-      CALL tke_tke( Kbb, Kaa, p_sh2, p_avm, p_avt, z_pdlr )   ! now tke (en)
+      CALL tke_tke( Kbb, Kmm, p_sh2, p_avm, p_avt, z_pdlr )   ! now tke (en)
       !
-      CALL tke_avn( Kbb, Kaa,        p_avm, p_avt, z_pdlr )   ! now avt, avm, dissl
+      CALL tke_avn( Kbb, Kmm,        p_avm, p_avt, z_pdlr )   ! now avt, avm, dissl
       !
 #if ! defined key_PSYCLONE_2p5p0
       IF( nn_pdl == 1 ) DEALLOCATE( z_pdlr )
@@ -190,7 +190,7 @@ CONTAINS
   END SUBROUTINE zdf_tke
 
 
-   SUBROUTINE tke_tke( Kbb, Kaa, p_sh2, p_avm, p_avt, p_pdlr )
+   SUBROUTINE tke_tke( Kbb, Kmm, p_sh2, p_avm, p_avt, p_pdlr )
       !!----------------------------------------------------------------------
       !!                   ***  ROUTINE tke_tke  ***
       !!
@@ -210,7 +210,7 @@ CONTAINS
       !! ---------------------------------------------------------------------
       USE zdf_oce , ONLY : en   ! ocean vertical physics
       !!
-      INTEGER                                   , INTENT(in   ) ::   Kbb, Kaa       ! ocean time level indices
+      INTEGER                                   , INTENT(in   ) ::   Kbb, Kmm       ! ocean time level indices
       REAL(wp), DIMENSION(A2D(0) ,jpk)          , INTENT(in   ) ::   p_sh2          ! shear production term
       REAL(wp), DIMENSION(jpi,jpj,jpk)          , INTENT(in   ) ::   p_avm          ! vertical eddy viscosity (w-points)
       REAL(wp), DIMENSION(A2D(0) ,jpk)          , INTENT(in   ) ::   p_avt          ! vertical eddy diffusivity (w-points)
@@ -337,11 +337,11 @@ CONTAINS
             !                       !* Depth of the LC circulation  (Axell 2002, Eq.47)
             !                             !- LHS of Eq.47
             DO_1Di( 0, 0 )
-               zpelc(ji,1) =  MAX( rn2b(ji,jj,1), 0._wp ) * gdepw(ji,jj,1,Kaa) * e3w(ji,jj,1,Kaa)
+               zpelc(ji,1) =  MAX( rn2b(ji,jj,1), 0._wp ) * gdepw(ji,jj,1,Kmm) * e3w(ji,jj,1,Kmm)
             END_1D
             DO_2Dik( 0, 0, 2, jpk, 1 )
                zpelc(ji,jk)  = zpelc(ji,jk-1) +   &
-                  &       MAX( rn2b(ji,jj,jk), 0._wp ) * gdepw(ji,jj,jk,Kaa) * e3w(ji,jj,jk,Kaa)
+                  &       MAX( rn2b(ji,jj,jk), 0._wp ) * gdepw(ji,jj,jk,Kmm) * e3w(ji,jj,jk,Kmm)
             END_2D
             !
             !                             !- compare LHS to RHS of Eq.47
@@ -351,7 +351,7 @@ CONTAINS
             END_2D
             !                                  ! finite LC depth
             DO_1Di( 0, 0 )
-               zhlc(ji) = gdepw(ji,jj,imlc(ji),Kaa)
+               zhlc(ji) = gdepw(ji,jj,imlc(ji),Kmm)
             END_1D
             !
             DO_1Di( 0, 0 )
@@ -360,9 +360,9 @@ CONTAINS
             END_1D
             DO_2Dik( 0, 0, 2, jpkm1, 1 )                   !* TKE Langmuir circulation source term added to en
                IF ( zus3(ji) /= 0._wp ) THEN
-                  IF ( gdepw(ji,jj,jk,Kaa) - zhlc(ji) < 0 .AND. wmask(ji,jj,jk) /= 0. ) THEN
+                  IF ( gdepw(ji,jj,jk,Kmm) - zhlc(ji) < 0 .AND. wmask(ji,jj,jk) /= 0. ) THEN
                      !                                           ! vertical velocity due to LC
-                     zwlc = rn_lc * SIN( rpi * gdepw(ji,jj,jk,Kaa) / zhlc(ji) )
+                     zwlc = rn_lc * SIN( rpi * gdepw(ji,jj,jk,Kmm) / zhlc(ji) )
                      !                                           ! TKE Langmuir circulation source term
                      en(ji,jj,jk) = en(ji,jj,jk) + rn_Dt * zus3(ji) * ( zwlc * zwlc * zwlc ) / zhlc(ji)
                   ENDIF
@@ -405,9 +405,9 @@ CONTAINS
             !                                   ! A minimum of 2.e-5 m2/s is imposed on TKE vertical
             !                                   ! eddy coefficient (ensure numerical stability)
             zzd_up = zcof * MAX(  p_avm(ji,jj,jk+1) + p_avm(ji,jj,jk  ) , 2.e-5_wp  )         &  ! upper diagonal
-               &          /    (  e3t(ji,jj,jk  ,Kaa) * e3w(ji,jj,jk  ,Kaa)  )
+               &          /    (  e3t(ji,jj,jk  ,Kmm) * e3w(ji,jj,jk  ,Kmm)  )
             zzd_lw = zcof * MAX(  p_avm(ji,jj,jk  ) + p_avm(ji,jj,jk-1) , 2.e-5_wp  )         &  ! lower diagonal
-               &          /    (  e3t(ji,jj,jk-1,Kaa) * e3w(ji,jj,jk  ,Kaa)  )
+               &          /    (  e3t(ji,jj,jk-1,Kmm) * e3w(ji,jj,jk  ,Kmm)  )
             !
             zd_up(ji,jk) = zzd_up               ! Matrix (zdiag, zd_up, zd_lw)
             zd_lw(ji,jk) = zzd_lw
@@ -438,8 +438,8 @@ CONTAINS
             CASE ( 1 ) ! Neumann BC
                DO_1Di( 0, 0 )
                   IF ( phioc(ji,jj) < 0 )  phioc(ji,jj) = 0._wp
-                  en(ji,jj,2) = en(ji,jj,2) + ( rn_Dt * phioc(ji,jj) / rho0 ) /e3w(ji,jj,2,Kaa)
-                  en(ji,jj,1) = en(ji,jj,2) + (2 * e3t(ji,jj,1,Kaa) * phioc(ji,jj)/rho0) / ( p_avm(ji,jj,1) + p_avm(ji,jj,2) )
+                  en(ji,jj,2) = en(ji,jj,2) + ( rn_Dt * phioc(ji,jj) / rho0 ) /e3w(ji,jj,2,Kmm)
+                  en(ji,jj,1) = en(ji,jj,2) + (2 * e3t(ji,jj,1,Kmm) * phioc(ji,jj)/rho0) / ( p_avm(ji,jj,1) + p_avm(ji,jj,2) )
                   zdiag(ji,1) = 1._wp
                   zdiag(ji,2) = zdiag(ji,2) + zd_lw(ji,2)
                   zd_lw(ji,2) = 0._wp
@@ -491,13 +491,13 @@ CONTAINS
          !
          IF( nn_etau == 1 ) THEN           !* penetration below the mixed layer (rn_efr fraction)
             DO_2Dik( 0, 0, 2, jpkm1, 1 )
-               en(ji,jj,jk) = en(ji,jj,jk) + rn_efr * en(ji,jj,1) * EXP( -gdepw(ji,jj,jk,Kaa) / htau(ji,jj) )   &
+               en(ji,jj,jk) = en(ji,jj,jk) + rn_efr * en(ji,jj,1) * EXP( -gdepw(ji,jj,jk,Kmm) / htau(ji,jj) )   &
                   &                                 * MAX( 0._wp, 1._wp - zice_fra(ji) ) * wmask(ji,jj,jk) * tmask(ji,jj,1)
             END_2D
          ELSEIF( nn_etau == 2 ) THEN       !* act only at the base of the mixed layer (jk=nmln)  (rn_efr fraction)
             DO_1Di( 0, 0 )
                jk = nmln(ji,jj)
-               en(ji,jj,jk) = en(ji,jj,jk) + rn_efr * en(ji,jj,1) * EXP( -gdepw(ji,jj,jk,Kaa) / htau(ji,jj) )   &
+               en(ji,jj,jk) = en(ji,jj,jk) + rn_efr * en(ji,jj,1) * EXP( -gdepw(ji,jj,jk,Kmm) / htau(ji,jj) )   &
                   &                                 * MAX( 0._wp, 1._wp - zice_fra(ji) ) * wmask(ji,jj,jk) * tmask(ji,jj,1)
             END_1D
          ELSEIF( nn_etau == 3 ) THEN       !* penetration below the mixed layer (HF variability)
@@ -505,7 +505,7 @@ CONTAINS
                ztau = SQRT( utau(ji,jj)*utau(ji,jj) + vtau(ji,jj)*vtau(ji,jj) ) * tmask(ji,jj,1)    ! module of the mean stress
                zdif = taum(ji,jj) - ztau                            ! mean of modulus - modulus of the mean
                zdif = rhftau_scl * MAX( 0._wp, zdif + rhftau_add )  ! apply some modifications...
-               en(ji,jj,jk) = en(ji,jj,jk) + zbbrau * zdif * EXP( -gdepw(ji,jj,jk,Kaa) / htau(ji,jj) )   &
+               en(ji,jj,jk) = en(ji,jj,jk) + zbbrau * zdif * EXP( -gdepw(ji,jj,jk,Kmm) / htau(ji,jj) )   &
                   &                        * MAX( 0._wp, 1._wp - zice_fra(ji) ) * wmask(ji,jj,jk) * tmask(ji,jj,1)
             END_2D
          ENDIF
@@ -522,7 +522,7 @@ CONTAINS
    END SUBROUTINE tke_tke
 
 
-   SUBROUTINE tke_avn( Kbb, Kaa, p_avm, p_avt, p_pdlr )
+   SUBROUTINE tke_avn( Kbb, Kmm, p_avm, p_avt, p_pdlr )
       !!----------------------------------------------------------------------
       !!                   ***  ROUTINE tke_avn  ***
       !!
@@ -558,7 +558,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       USE zdf_oce , ONLY : en, avtb, avmb, avtb_2d   ! ocean vertical physics
       !!
-      INTEGER                         ,           INTENT(in   ) ::   Kbb, Kaa       ! ocean time level indices
+      INTEGER                         ,           INTENT(in   ) ::   Kbb, Kmm       ! ocean time level indices
       REAL(wp), DIMENSION(jpi,jpj,jpk),           INTENT(  out) ::   p_avm          ! vertical eddy viscosity (w-points)
       REAL(wp), DIMENSION(A2D(0) ,jpk),           INTENT(  out) ::   p_avt          ! vertical eddy diffusivity (w-points)
       REAL(wp), DIMENSION(T2D(0) ,jpk), OPTIONAL, INTENT(in   ) ::   p_pdlr         ! inverse of Prandtl number
@@ -661,18 +661,18 @@ CONTAINS
             ! where wmask = 0 set zmxlm == e3w(:,:,:,Kmm)
             CASE ( 0 )           ! bounded by the distance to surface and bottom
                DO_2Dik( 0, 0, 2, jpkm1, 1 )
-                  zemxl = MIN( gdepw(ji,jj,jk,Kaa) - gdepw(ji,jj,mikt(ji,jj),Kaa), zmxlm(ji,jk),   &
-                  &            gdepw(ji,jj,mbkt(ji,jj)+1,Kaa) - gdepw(ji,jj,jk,Kaa) )
+                  zemxl = MIN( gdepw(ji,jj,jk,Kmm) - gdepw(ji,jj,mikt(ji,jj),Kmm), zmxlm(ji,jk),   &
+                  &            gdepw(ji,jj,mbkt(ji,jj)+1,Kmm) - gdepw(ji,jj,jk,Kmm) )
                   ! wmask prevent zmxlm = 0 if jk = mikt(ji,jj)
                   zmxlm(ji,jk) = zemxl * wmask(ji,jj,jk)   &
-                     &         + MIN( zmxlm(ji,jk) , e3w(ji,jj,jk,Kaa) ) * (1 - wmask(ji,jj,jk))
+                     &         + MIN( zmxlm(ji,jk) , e3w(ji,jj,jk,Kmm) ) * (1 - wmask(ji,jj,jk))
                   zmxld(ji,jk) = zemxl * wmask(ji,jj,jk)   &
-                     &         + MIN( zmxlm(ji,jk) , e3w(ji,jj,jk,Kaa) ) * (1 - wmask(ji,jj,jk))
+                     &         + MIN( zmxlm(ji,jk) , e3w(ji,jj,jk,Kmm) ) * (1 - wmask(ji,jj,jk))
                END_2D
                !
             CASE ( 1 )           ! bounded by the vertical scale factor
                DO_2Dik( 0, 0, 2, jpkm1, 1 )
-                  zemxl = MIN( e3w(ji,jj,jk,Kaa), zmxlm(ji,jk) )
+                  zemxl = MIN( e3w(ji,jj,jk,Kmm), zmxlm(ji,jk) )
                   zmxlm(ji,jk) = zemxl
                   zmxld(ji,jk) = zemxl
                END_2D
@@ -680,10 +680,10 @@ CONTAINS
             CASE ( 2 )           ! |dk[xml]| bounded by e3t :
                DO_2Dik( 0, 0, 2, jpkm1, 1 )    ! from the surface to the bottom :
                   zmxlm(ji,jk) =   &
-                     &    MIN( zmxlm(ji,jk-1) + e3t(ji,jj,jk-1,Kaa), zmxlm(ji,jk) )
+                     &    MIN( zmxlm(ji,jk-1) + e3t(ji,jj,jk-1,Kmm), zmxlm(ji,jk) )
                END_2D
                DO_2Dik( 0, 0, jpkm1, 2, -1 )   ! from the bottom to the surface :
-                  zemxl = MIN( zmxlm(ji,jk+1) + e3t(ji,jj,jk+1,Kaa), zmxlm(ji,jk) )
+                  zemxl = MIN( zmxlm(ji,jk+1) + e3t(ji,jj,jk+1,Kmm), zmxlm(ji,jk) )
                   zmxlm(ji,jk) = zemxl
                   zmxld(ji,jk) = zemxl
                END_2D
@@ -691,11 +691,11 @@ CONTAINS
             CASE ( 3 )           ! lup and ldown, |dk[xml]| bounded by e3t :
                DO_2Dik( 0, 0, 2, jpkm1, 1 )    ! from the surface to the bottom : lup
                   zmxld(ji,jk) =    &
-                     &    MIN( zmxld(ji,jk-1) + e3t(ji,jj,jk-1,Kaa), zmxlm(ji,jk) )
+                     &    MIN( zmxld(ji,jk-1) + e3t(ji,jj,jk-1,Kmm), zmxlm(ji,jk) )
                END_2D
                DO_2Dik( 0, 0, jpkm1, 2, -1 )   ! from the bottom to the surface : ldown
                   zmxlm(ji,jk) =   &
-                     &    MIN( zmxlm(ji,jk+1) + e3t(ji,jj,jk+1,Kaa), zmxlm(ji,jk) )
+                     &    MIN( zmxlm(ji,jk+1) + e3t(ji,jj,jk+1,Kmm), zmxlm(ji,jk) )
                END_2D
                DO_2Dik( 0, 0, 2, jpkm1, 1 )
                   zemlm = MIN ( zmxld(ji,jk),  zmxlm(ji,jk) )
