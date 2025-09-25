@@ -64,7 +64,7 @@ misspelled variable in namelist namrun (ref) iostat =  5010
 misspelled variable in namelist namdom (ref) iostat =  5010*
 
 Changes have been made to translate the namelist_cfg_template and namelist_ice_cfg_template to v5 namelists by removing variables not present in the v5 namelist or changing the name of variables that changed. Values of variables have been left unchanged with the exeption of rn_alb_dpnd which was set to 0.30 but a new comment suggest that is outside the obs range 0.12 -- 0.25 so the new default 0.18 has be used for rn_alb_dpnd. 
-rn_frm_ht0 was left out of the v5 namelist_cfg_template because ice form drag is included in nemo v5. This means the ice\*.F90 files probably won't need to be carried over in MY_SRC
+rn_frm_ht0 was left out of the v5 namelist_cfg_template because ice form drag is included in nemo v5. Changes in sbc_oce.F90 suggest the ice\*.F90 files probably won't need to be carried over in MY_SRC
 
 Copied namelist_ref from nemo_v5 SHARED to EXPREF/5.0/ and EXPREF/5.0.1/. 
 
@@ -188,7 +188,9 @@ I've been comparing with nemo-main instead of nemo v5 so I need to check everyth
 Done:
 namelist_cfg_template, namelist_ref, namelist_ice_cfg_template, namelist_ice_ref
 Done:
-bdydyn.F90, diahth.F90, diawri.F90, domain.F90, dommsk.F90, dtatsd.F90, dynatf_qco.F90, fldread.F90, icerst.F90, in_out_manager.F90, istate.F90, nemogcm.F90, restart.F90, sbc_oce.F90, sbcblk.F90
+bdydyn.F90, diahth.F90, diawri.F90, domain.F90, dommsk.F90, dtatsd.F90, dynatf_qco.F90, fldread.F90, icerst.F90, in_out_manager.F90, istate.F90, nemogcm.F90, restart.F90, sbc_oce.F90, sbcblk.F90, sbcrnf.nc, sbcssm.F90, tide.h90, tide_mod.F90, trdini.F90, trdmxl_rst.F90, trdtra.F90, zdftke.F90
 dynspg_ts.F90 - not sure "IF( l_trddyn ) THEN" bit line 963 4.2.2 MY_SRC, should be in the if loop next to pvv_b
+traldf_triad.F90 - line 134 to 144 in 4.2.2 MY_SRC, not sure if this should be included with v5 change or instead? The 5.0 My_SRC is a fair combination of v5 and MY_SRC.
+trdmxl.F90 - the subroutine trd_mxl_zint is mssing in 4.2.2 MY_SRC, this has been continued in 5.0 MY_SRC
 MY_SRC only:
 diapea.F90
