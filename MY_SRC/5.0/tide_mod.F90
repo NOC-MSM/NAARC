@@ -250,7 +250,7 @@ CONTAINS
       ! Identify the selected components that are availble
       icomp = 0
       DO jk = 1, jpmax_harmo
-         IF (TRIM(pcnames(jk)) /= '') THEN
+         IF (TRIM(pcnames(jk)) /= '' .AND. TRIM(pcnames(jk)) /= 'n/a') THEN
             DO jj = 1, jpmax_harmo
                ! Find matches between selected and available constituents
                ! (ignore capitalisation unless legacy variant has been selected)
