@@ -194,3 +194,39 @@ traldf_triad.F90 - line 134 to 144 in 4.2.2 MY_SRC, not sure if this should be i
 trdmxl.F90 - the subroutine trd_mxl_zint is mssing in 4.2.2 MY_SRC, this has been continued in 5.0 MY_SRC
 MY_SRC only:
 diapea.F90
+
+I think I'm getting a segmentation fault.
+Adding debug flag (-O0 -g) in arch
+Trying gdb4hpc.
+gdb nemo core
+bt
+#10 0x00000000008e8a7c in iom::iom_use (cdname=..., _cdname=9) at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/iom.f90:2893
+#11 0x0000000000cf96ec in icedyn_rdgrft::ice_dyn_rdgrft_init () at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/icedyn_rdgrft.f90:1276
+#12 0x0000000000c8ebdd in icedyn::ice_dyn_init () at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/icedyn.f90:382
+#13 0x0000000000880051 in icestp::ice_init (kbb=1, kmm=2, kaa=3) at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/icestp.f90:336
+#14 0x000000000048ee5f in sbcmod::sbc_init (kbb=1, kmm=2, kaa=3) at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/sbcmod.f90:382
+#15 0x0000000000466fd5 in nemogcm::nemo_init () at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/nemogcm.f90:409
+#16 0x0000000000467210 in nemogcm::nemo_gcm () at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/nemogcm.f90:161
+#17 0x00000000004632df in nemo () at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/WORK/nemo.f90:17
+#18 0x0000000000463321 in main (argc=1, argv=0x7ffc1dbd6de3) at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/WORK/nemo.f90:11
+#19 0x000015376b1e829d in __libc_start_main () from /lib64/libc.so.6
+#20 0x000000000046321a in _start () at ../sysdeps/x86_64/start.S:120
+
+It maybe something related to the MY_SRC icestp.f90 and ice files I haven't updated to v5.0.
+
+Isolate Ice and Momentum files.
+
+#10 0x00000000008e8a7c in iom::iom_use (cdname=..., _cdname=9)
+    at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/iom.f90:2893
+#11 0x0000000000cf96ec in icedyn_rdgrft::ice_dyn_rdgrft_init ()
+    at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/icedyn_rdgrft.f90:1276
+#12 0x0000000000c8ebdd in icedyn::ice_dyn_init ()
+    at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/icedyn.f90:382
+#13 0x0000000000880051 in icestp::ice_init (kbb=1, kmm=2, kaa=3)
+--Type <RET> for more, q to quit, c to continue without paging--
+tp.f90:336
+#14 0x000000000048ee5f in sbcmod::sbc_init (kbb=1, kmm=2, kaa=3) at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/sbcmod.f90:382
+
+Ice files that weren't obviouse:
+sbcmod.F90, sbcblk.F90
+
