@@ -64,7 +64,7 @@ misspelled variable in namelist namrun (ref) iostat =  5010
 misspelled variable in namelist namdom (ref) iostat =  5010*
 
 Changes have been made to translate the namelist_cfg_template and namelist_ice_cfg_template to v5 namelists by removing variables not present in the v5 namelist or changing the name of variables that changed. Values of variables have been left unchanged with the exeption of rn_alb_dpnd which was set to 0.30 but a new comment suggest that is outside the obs range 0.12 -- 0.25 so the new default 0.18 has be used for rn_alb_dpnd. 
-rn_frm_ht0 was left out of the v5 namelist_cfg_template because ice form drag is included in nemo v5. Changes in sbc_oce.F90 suggest the ice\*.F90 files probably won't need to be carried over in MY_SRC
+rn_frm_ht0 was left out of the v5 namelist_cfg_template because ice form drag is included in nemo v5. Changes in sbcblk.F90 suggest the ice\*.F90 files probably won't need to be carried over in MY_SRC
 
 Copied namelist_ref from nemo_v5 SHARED to EXPREF/5.0/ and EXPREF/5.0.1/. 
 
@@ -197,7 +197,8 @@ diapea.F90
 
 I think I'm getting a segmentation fault.
 Adding debug flag (-O0 -g) in arch
-Trying gdb4hpc.
+Trying: 
+module load gdb4hpc.
 gdb nemo core
 bt
 #10 0x00000000008e8a7c in iom::iom_use (cdname=..., _cdname=9) at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/iom.f90:2893
@@ -223,10 +224,19 @@ Isolate Ice and Momentum files.
 #12 0x0000000000c8ebdd in icedyn::ice_dyn_init ()
     at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/icedyn.f90:382
 #13 0x0000000000880051 in icestp::ice_init (kbb=1, kmm=2, kaa=3)
---Type <RET> for more, q to quit, c to continue without paging--
-tp.f90:336
+    at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/icestp.f90:336
 #14 0x000000000048ee5f in sbcmod::sbc_init (kbb=1, kmm=2, kaa=3) at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/sbcmod.f90:382
 
-Ice files that weren't obviouse:
+Ice files that weren't obvious and have been moved to the Ice folder:
 sbcmod.F90, sbcblk.F90
 
+Still same error.
+
+Time to compare the MY_SRC ice files to v5.0 ice. The ice.F90 is substantially different in nemo v5.0, I'm not sure where to start with making changes. It is more different between v4.2.2 than it is the same.
+
+namelist_ice_ref in EXPREF is the same as nemo v5. namelist_ice_cfg_template has one additional variable rn_alb_lpnd and rn_cio has changed to run_Cd_io.
+
+Updating EXPREF/field_def_nemo-ice.xml to v5. EXPREF/field_def_nemo-ice.xml only adds lines relative to v4.2.2 SHARED/field_def_nemo-ice.xml, only adding sbcssm variables and not ice related ones.
+EXPREF/file_def_nemo-ice.xml doesn't have any of the custom variables added so I left as it was in v4.2.2 EXPREF.
+
+Updating EXPREF/field_def_nemo-oce.xml to v5. The tidal harmonics have been changed to v5 and not copied from EXPREF v4.2.2 because nn_tide_var = 1 in the namelist_cfg_template.

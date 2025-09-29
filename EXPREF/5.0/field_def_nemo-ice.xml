@@ -18,7 +18,7 @@
   <field_group id="SBC" > <!-- time step automaticaly defined based on nn_fsbc -->
 
     <!-- 2D variables -->
-    <field_group id="SBC_2D" grid_ref="grid_T_2D" >
+    <field_group id="SBC_2D" grid_ref="grid_T_2D_inner" >
 
       <!-- =================== -->
       <!-- standard ice fields -->
@@ -70,8 +70,8 @@
       <field id="icesalm"      long_name="Mass of salt in sea ice per area"                        standard_name="sea_ice_salt_mass"                         unit="kg/m2" />
 
       <!-- momentum (rheology) -->
-      <field id="uice"         long_name="X-component of sea ice velocity"                         standard_name="sea_ice_x_velocity"                        unit="m/s"  />
-      <field id="vice"         long_name="Y-component of sea ice velocity"                         standard_name="sea_ice_y_velocity"                        unit="m/s"  />
+      <field id="uice"         long_name="X-component of sea ice velocity"                         standard_name="sea_ice_x_velocity"                        unit="m/s" grid_ref="grid_T_2D" />
+      <field id="vice"         long_name="Y-component of sea ice velocity"                         standard_name="sea_ice_y_velocity"                        unit="m/s" grid_ref="grid_T_2D" />
       <field id="icevel"       long_name="Sea-ice speed"                                           standard_name="sea_ice_speed"                             unit="m/s"  />
       <field id="utau_ai"      long_name="X-component of atmospheric stress on sea ice"            standard_name="surface_downward_x_stress"                 unit="N/m2" />
       <field id="vtau_ai"      long_name="Y-component of atmospheric stress on sea ice"            standard_name="surface_downward_y_stress"                 unit="N/m2" />
@@ -94,7 +94,14 @@
       <field id="yield11"      long_name="yield surface tensor component 11"                       standard_name="yield11"                                   unit="N/m"  />
       <field id="yield22"      long_name="yield surface tensor component 22"                       standard_name="yield22"                                   unit="N/m"  />
       <field id="yield12"      long_name="yield surface tensor component 12"                       standard_name="yield12"                                   unit="N/m"  />
-      <field id="beta_evp"     long_name="Relaxation parameter of ice rheology (beta)"             standard_name="relaxation_parameter_of_ice_rheology"      unit=""  />
+      <field id="beta_evp"     long_name="Relaxation parameter of ice rheology (beta)"             standard_name="relaxation_parameter_of_ice_rheology"      unit=""     grid_ref="grid_T_2D" />
+      <field id="lead_open"    long_name="Lead area opening rate"                                  standard_name="lead_open"                                    unit="1/s"  />
+      <field id="rdg_loss"     long_name="Ridging ice area loss rate"                              standard_name="rdg_loss"                                 unit="1/s"  />
+      <field id="rft_loss"     long_name="Rafting ice area loss rate"    
+standard_name="rft_loss"                                 unit="1/s"  />
+      <field id="rdg_gain"     long_name="New ridged ice area gain rate"                             standard_name="rdg_gain"                                 unit="1/s"  />
+      <field id="rft_gain"     long_name="New rafted ice area gain rate"                            standard_name="rft_gain"                                 unit="1/s"  />
+
 
       <!-- surface heat fluxes -->
       <field id="qt_ice"       long_name="total heat flux at ice surface"                          standard_name="surface_downward_heat_flux_in_air"         unit="W/m2" />
@@ -112,17 +119,17 @@
       <field id="Cd_ice"       long_name="Drag coefficient over sea-ice"                            standard_name="drag_coefficient_ice"                     unit=""     />
       <field id="Ce_ice"       long_name="Sublimation coefficient over sea-ice"                     standard_name="evap_coefficient_ice"                     unit=""     />
       <field id="Ch_ice"       long_name="Sensible heat coefficient over sea-ice"                   standard_name="sensible_heat_coefficient_ice"            unit=""     />
-      <field id="drag_io"      long_name="momentum drag coefficient ice-ocean"      standard_name="sea_ice_ocean_drag"      unit=" " />
-      <field id="drag_io_skin" long_name="momentum drag coefficient ice-ocean skin"      standard_name="sea_ice_ocean_drag skin"      unit=" " />
-      <field id="drag_io_keel" long_name="momentum drag coefficient ice-ocean keel"      standard_name="sea_ice_ocean_drag keel"      unit=" " />
-      <field id="drag_io_floe" long_name="momentum drag coefficient ice-ocean floe"      standard_name="sea_ice_ocean_drag floe"      unit=" " />
-      <field id="drag_ia"      long_name="momentum drag coefficient ice-atmosphere"      standard_name="sea_ice_atmosphere_drag"      unit=" " />
-      <field id="drag_ia_skin" long_name="momentum drag coefficient ice-atmosphere skin"      standard_name="sea_ice_atmosphere_drag skin"      unit=" " />
-      <field id="drag_ia_rdg"  long_name="momentum drag coefficient ice-atmosphere rdg"      standard_name="sea_ice_atmosphere_drag rdg"      unit=" " />
-      <field id="drag_ia_floe" long_name="momentum drag coefficient ice-atmosphere floe"      standard_name="sea_ice_atmosphere_drag floe"      unit=" " />
-      <field id="drag_ia_pond" long_name="momentum drag coefficient ice-atmosphere pond"      standard_name="sea_ice_atmosphere_drag pond"      unit=" " />
-      <field id="ardg_drag"    long_name="ridged ice concentration"      standard_name="ridged ice concentration"      unit=" " />
-      <field id="vrdg_drag"    long_name="ridged ice thickness"      standard_name="ridged ice thickness"      unit="m" />
+      <field id="drag_io"      long_name="momentum drag coefficient ice-ocean"                      standard_name="sea_ice_ocean_drag"                       unit=" " />
+      <field id="drag_io_skin" long_name="momentum drag coefficient ice-ocean skin"                 standard_name="sea_ice_ocean_drag skin"                  unit=" " />
+      <field id="drag_io_keel" long_name="momentum drag coefficient ice-ocean keel"                 standard_name="sea_ice_ocean_drag keel"                  unit=" " />
+      <field id="drag_io_floe" long_name="momentum drag coefficient ice-ocean floe"                 standard_name="sea_ice_ocean_drag floe"                  unit=" " />
+      <field id="drag_ia"      long_name="momentum drag coefficient ice-atmosphere"                 standard_name="sea_ice_atmosphere_drag"                  unit=" " />
+      <field id="drag_ia_skin" long_name="momentum drag coefficient ice-atmosphere skin"            standard_name="sea_ice_atmosphere_drag skin"             unit=" " />
+      <field id="drag_ia_rdg"  long_name="momentum drag coefficient ice-atmosphere rdg"             standard_name="sea_ice_atmosphere_drag rdg"              unit=" " />
+      <field id="drag_ia_floe" long_name="momentum drag coefficient ice-atmosphere floe"            standard_name="sea_ice_atmosphere_drag floe"             unit=" " />
+      <field id="drag_ia_pond" long_name="momentum drag coefficient ice-atmosphere pond"            standard_name="sea_ice_atmosphere_drag pond"             unit=" " />
+      <field id="ardg_drag"    long_name="ridged ice concentration"                                 standard_name="ridged ice concentration"                 unit=" " />
+      <field id="vrdg_drag"    long_name="ridged ice thickness"                                     standard_name="ridged ice thickness"                     unit="m" />
 
       <!-- trends -->
       <field id="afxthd"       long_name="sea-ice area fraction change from thermodynamics" standard_name="tendency_of_sea_ice_area_fraction_due_to_dynamics" unit="s-1" />
@@ -323,7 +330,7 @@
     </field_group> <!-- SBC_2D -->
 
     <!-- categories -->
-    <field_group id="SBC_3D" grid_ref="grid_T_ncatice" >
+    <field_group id="SBC_3D" grid_ref="grid_T_ncatice_inner" >
 
       <!-- standard ice fields -->
       <field id="iceconc_cat"  long_name="Sea-ice concentration per category"                unit=""        />
@@ -335,8 +342,8 @@
       <field id="icettop_cat"  long_name="Ice/snow surface temperature per category"         unit="degC"    detect_missing_value="true" />
       <field id="iceapnd_cat"  long_name="Ice melt pond grid fraction per category"          unit=""        />
       <field id="icevpnd_cat"  long_name="Ice melt pond volume per grid area per category"   unit="m"       />
-      <field id="icehpnd_cat"  long_name="Ice melt pond thickness per category"              unit="m"       detect_missing_value="true" />
       <field id="icevlid_cat"  long_name="Ice melt pond lid volume per category"             unit="m"       />
+      <field id="icehpnd_cat"  long_name="Ice melt pond thickness per category"              unit="m"       detect_missing_value="true" />
       <field id="icehlid_cat"  long_name="Ice melt pond lid thickness per category"          unit="m"       detect_missing_value="true" />
       <field id="iceafpnd_cat" long_name="Ice melt pond ice fraction per category"           unit=""        />
       <field id="iceaepnd_cat" long_name="Ice melt pond effective fraction per category"     unit=""        />
@@ -355,8 +362,23 @@
       <field id="tice_cvgerr" long_name="sea ice temperature convergence error"      standard_name="sea_ice_temperature_convergence_err" unit="K" />
       <field id="tice_cvgstp" long_name="sea ice temperature convergence iterations" standard_name="sea_ice_temperature_convergence_stp" unit=""  />
 
+      <!-- salt drainage and flushing sanity checks -->
+      <field id="cfl_flush"        long_name="max CFL during flushing" unit="" />
+      <field id="cfl_drain"        long_name="max CFL during drainage" unit="" />
+      <field id="sice_flush_neg"   long_name="negative sea ice salinity during flushing"            detect_missing_value="true" unit="g/kg" />
+      <field id="sice_drain_neg"   long_name="negative sea ice salinity during drainage"            detect_missing_value="true" unit="g/kg" />
+
     </field_group> <!-- SBC_3D -->
 
+    <!-- layers -->
+    <field_group id="SBC_4D" grid_ref="grid_T_nlayice_inner" >
+
+      <!-- standard ice fields -->
+      <field id="icesalt_lay"  long_name="Sea-Ice salinity per layer"   unit="g/kg"    detect_missing_value="true" />
+      <field id="icetemp_lay"  long_name="Ice temperature per layer"    unit="degC"    detect_missing_value="true" />
+      
+    </field_group> <!-- SBC_4D -->    
+    
     <!-- scalar variables -->
     <field_group id="SBC_scalar"  grid_ref="grid_scalar" >
       <field id="NH_iceextt"      long_name="Sea ice extent North"                   standard_name="sea_ice_extent_n"                   unit="1e6_km2"  />
@@ -366,7 +388,6 @@
       <field id="NH_icearea"      long_name="Sea ice area North"                     standard_name="sea_ice_area_n"                     unit="1e6_km2"  />
       <field id="SH_icearea"      long_name="Sea ice area South"                     standard_name="sea_ice_area_s"                     unit="1e6_km2"  />
 
-      <!-- available with ln_icediahsb -->
       <!-- global forcings  -->
       <field id="ibgfrcvoltop"    long_name="global mean ice/snow forcing at interface ice/snow-atm (volume equivalent ocean volume)"   unit="km3"      />
       <field id="ibgfrcvolbot"    long_name="global mean ice/snow forcing at interface ice/snow-ocean (volume equivalent ocean volume)" unit="km3"      />
@@ -399,7 +420,7 @@
     -->
     <!-- output variables for my configuration (example) -->
 
-    <field_group id="myvarICE"        grid_ref="grid_T_2D" >
+    <field_group id="myvarICE" >
       <!-- ice mask -->
       <field field_ref="icemask"          name="simsk"   />
       <field field_ref="icemask05"        name="simsk05" />
@@ -441,6 +462,20 @@
       <field field_ref="utau_oi"          name="utau_oi" />
       <field field_ref="vtau_oi"          name="vtau_oi" />
 
+      <!-- drags -->
+      <field field_ref="Cd_ice"           name="Cd_ice"       />
+      <field field_ref="Ch_ice"           name="Ch_ice"       />
+      <field field_ref="Ce_ice"           name="Ce_ice"       />
+      <field field_ref="drag_io"          name="drag_io"      />
+      <field field_ref="drag_io_skin"     name="drag_io_skin" />
+      <field field_ref="drag_io_keel"     name="drag_io_keel" />
+      <field field_ref="drag_io_floe"     name="drag_io_floe" />
+      <field field_ref="drag_ia"          name="drag_ia"      />
+      <field field_ref="drag_ia_skin"     name="drag_ia_skin" />
+      <field field_ref="drag_ia_rdg"      name="drag_ia_rdg"  />
+      <field field_ref="drag_ia_floe"     name="drag_ia_floe" />
+      <field field_ref="drag_ia_pond"     name="drag_ia_pond" />
+
       <!-- rheology -->
       <field field_ref="icediv"           name="sidive"  />
       <field field_ref="iceshe"           name="sishea"  />
@@ -462,19 +497,6 @@
       <field field_ref="qemp_ice"         name="qemp_ice"   />
       <field field_ref="albedo"           name="albedo"     />
       <field field_ref="icealb"           name="icealb"     />
-
-      <field field_ref="Cd_ice"           name="Cd_ice"     />
-      <field field_ref="Ch_ice"           name="Ch_ice"     />
-      <field field_ref="Ce_ice"           name="Ce_ice"     />
-      <field field_ref="drag_io"          name="drag_io"     />
-      <field field_ref="drag_io_skin"     name="drag_io_skin"     />
-      <field field_ref="drag_io_keel"     name="drag_io_keel"     />
-      <field field_ref="drag_io_floe"     name="drag_io_floe"     />
-      <field field_ref="drag_ia"          name="drag_ia"     />
-      <field field_ref="drag_ia_skin"     name="drag_ia_skin"     />
-      <field field_ref="drag_ia_rdg"      name="drag_ia_rdg"     />
-      <field field_ref="drag_ia_floe"     name="drag_ia_floe"     />
-      <field field_ref="drag_ia_pond"     name="drag_ia_pond"     />
 
       <field field_ref="hfxcndtop"        name="hfxcndtop"  />
       <field field_ref="hfxcndbot"        name="hfxcndbot"  />
@@ -522,7 +544,7 @@
     </field_group>
 
 
-    <field_group id="myvarICE_cat"        grid_ref="grid_T_ncatice" >
+    <field_group id="myvarICE_cat"  >
 
       <!-- categories -->
       <field field_ref="icemask_cat"      name="simskcat"/>
@@ -551,7 +573,7 @@
       <field field_ref="ilbgvol_tot"      name="ilbgvol_tot"  />
     </field_group>
     
-    <field_group id="ICE_budget"        grid_ref="grid_T_2D" >
+    <field_group id="ICE_budget"  >
       <!-- general -->
       <field field_ref="icemask"          name="simsk"      />
       <field field_ref="iceconc"          name="siconc"     />
@@ -606,7 +628,7 @@
     </field_group>
 
     <!-- SIMIP daily fields -->
-    <field_group id="SIday_fields"    grid_ref="grid_T_2D" >
+    <field_group id="SIday_fields"   >
       <field field_ref="icepres"          name="sitimefrac"   />
       <field field_ref="iceconc_pct"      name="siconc"       />
       <field field_ref="icethic_cmip"     name="sithick"      />
@@ -618,7 +640,7 @@
     </field_group>
 
     <!-- SIMIP monthly fields -->
-    <field_group id="SImon_fields"    grid_ref="grid_T_2D"  >
+    <field_group id="SImon_fields"    >
       <!-- Sea-ice state variables -->
       <field field_ref="icepres"          name="sitimefrac"   />
       <field field_ref="iceconc_pct"      name="siconc"       />
