@@ -240,3 +240,22 @@ Updating EXPREF/field_def_nemo-ice.xml to v5. EXPREF/field_def_nemo-ice.xml only
 EXPREF/file_def_nemo-ice.xml doesn't have any of the custom variables added so I left as it was in v4.2.2 EXPREF.
 
 Updating EXPREF/field_def_nemo-oce.xml to v5. The tidal harmonics have been changed to v5 and not copied from EXPREF v4.2.2 because nn_tide_var = 1 in the namelist_cfg_template.
+
+#6  0x0000000000423c13 in xios::CField::solveGridReference() [clone .cold] ()
+#7  0x0000000001049692 in xios::CField::solveOnlyReferenceEnabledField(bool) ()
+#8  0x000000000105c167 in xios::CFile::solveOnlyRefOfEnabledFields(bool) ()
+#9  0x0000000000fd8f57 in xios::CContext::solveOnlyRefOfEnabledFields(bool) ()
+#10 0x0000000000fe082b in xios::CContext::postProcessing() ()
+#11 0x0000000000fe6d64 in xios::CContext::postProcessingGlobalAttributes() ()
+#12 0x0000000000fe7258 in xios::CContext::closeDefinition() ()
+#13 0x000000000117dd59 in cxios_context_close_definition ()
+#14 0x00000000009120af in iom::iom_init_closedef (cdname=..., _cdname=0)
+    at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/iom.f90:322
+#15 0x00000000004cf896 in stpmlf::stp_mlf (kstp=1)
+    at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/stpmlf.f90:124
+#16 0x0000000000467340 in nemogcm::nemo_gcm ()
+    at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/nemogcm.f90:186
+
+Try using v5 default .xml files instead of custom ones.
+
+#Try converting sbcmod to v5 but only sst bits not ice bits.

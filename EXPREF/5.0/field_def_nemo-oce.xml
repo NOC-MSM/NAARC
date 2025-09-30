@@ -207,47 +207,6 @@ that are available in the tidal-forcing implementation (see
       <field id="ssh"          long_name="sea surface height"                                 standard_name="sea_surface_height_above_geoid"             unit="m" />
       <field id="ssh2"         long_name="square of sea surface height"                       standard_name="square_of_sea_surface_height_above_geoid"   unit="m2" > ssh * ssh </field >
       <field id="wetdep"       long_name="wet depth"                                          standard_name="wet_depth"                                  unit="m" />
-
-      <!-- EOS80 -->
-      <field id="sst_pot"          long_name="sea surface potential temperature"                            standard_name="sea_surface_temperature"             unit="degC"     />
-      <field id="sst2_pot"         long_name="square of sea surface potential temperature"                  standard_name="square_of_sea_surface_temperature"   unit="degC2"     > sst_pot * sst_pot </field >
-      <field id="sstmax_pot"       long_name="max of sea surface potential temperature"   field_ref="sst_pot"   operation="maximum"                                                 />
-      <field id="sstmin_pot"       long_name="min of sea surface potential temperature"   field_ref="sst_pot"   operation="minimum"                                                 />
-      <field id="sstgrad_pot"      long_name="module of potential sst gradient"                                                                                 unit="degC/m"   grid_ref="grid_T_2D_inner"/>
-      <field id="sstgrad2_pot"     long_name="square of module of potential sst gradient"                                                                       unit="degC2/m2" grid_ref="grid_T_2D_inner"/>
-      <field id="sbt_pot"          long_name="sea bottom potential temperature"                                                                                 unit="degC"     grid_ref="grid_T_2D_inner"/>
-      <field id="tosmint_pot"      long_name="vertical integral of potential temperature times density"     standard_name="integral_wrt_depth_of_product_of_density_and_potential_temperature"  unit="(kg m2) degree_C" grid_ref="grid_T_2D_inner"/>
-      <field id="sst_wl_pot"       long_name="Delta potential SST of warm layer"                                                                                unit="degC"     />
-      <field id="sst_cs_pot"       long_name="Delta potential SST of cool skin"                                                                                 unit="degC"     />
-      <field id="temp_3m_pot"      long_name="potential temperature at 3m"                                                                                      unit="degC"     />
-
-      <field id="sss_pra"          long_name="sea surface practical salinity"                               standard_name="sea_surface_practical_salinity"                unit="1e-3"     />
-      <field id="sss2_pra"         long_name="square of sea surface practical salinity"                                                                         unit="1e-6"      > sss_pra * sss_pra </field >
-      <field id="sssmax_pra"       long_name="max of sea surface practical salinity"      field_ref="sss_pra"   operation="maximum"                                                 />
-      <field id="sssmin_pra"       long_name="min of sea surface practical salinity"      field_ref="sss_pra"   operation="minimum"                                                 />
-      <field id="sbs_pra"          long_name="sea bottom practical salinity"                                                                                    unit="0.001"   grid_ref="grid_T_2D_inner" />
-      <field id="somint_pra"       long_name="vertical integral of practical salinity times density"        standard_name="integral_wrt_depth_of_product_of_density_and_practical_salinity"  unit="(kg m2) x (1e-3)" grid_ref="grid_T_2D_inner"/>
-      <!-- TEOS10 -->
-      <field id="sst_con"          long_name="sea surface conservative temperature"                            standard_name="sea_surface_conservative_temperature"             unit="degC"     />
-      <field id="sst2_con"         long_name="square of sea surface conservative temperature"                  standard_name="square_of_sea_surface_temperature"   unit="degC2"     > sst_con * sst_con </field >
-      <field id="sstmax_con"       long_name="max of sea surface conservative temperature"   field_ref="sst_con"   operation="maximum"                                                 />
-      <field id="sstmin_con"       long_name="min of sea surface conservative temperature"   field_ref="sst_con"   operation="minimum"                                                 />
-      <field id="sstgrad_con"      long_name="module of conservative sst gradient"                                                                                 unit="degC/m"  grid_ref="grid_T_2D_inner" />
-      <field id="sstgrad2_con"     long_name="square of module of conservative sst gradient"                                                                       unit="degC2/m2" grid_ref="grid_T_2D_inner" />
-      <field id="sbt_con"          long_name="sea bottom conservative temperature"                                                                                 unit="degC"    grid_ref="grid_T_2D_inner" />
-      <field id="tosmint_con"      long_name="vertical integral of conservative temperature times density"     standard_name="integral_wrt_depth_of_product_of_density_and_conservative_temperature"  unit="(kg m2) degree_C" grid_ref="grid_T_2D_inner"/>
-      <field id="sst_wl_con"       long_name="Delta conservative SST of warm layer"                                                                                unit="degC"     />
-      <field id="sst_cs_con"       long_name="Delta conservative SST of cool skin"                                                                                 unit="degC"     />
-      <field id="temp_3m_con"      long_name="conservative temperature at 3m"                                                                                      unit="degC"     />
-
-      <field id="sss_abs"          long_name="sea surface absolute salinity"                               standard_name="sea_surface_absolute_salinity"                unit="1e-3"     />
-      <field id="sss2_abs"         long_name="square of sea surface absolute salinity"                                                                         unit="1e-6"      > sss_abs * sss_abs </field >
-      <field id="sssmax_abs"       long_name="max of sea surface absolute salinity"      field_ref="sss_abs"   operation="maximum"                                                 />
-      <field id="sssmin_abs"       long_name="min of sea surface absolute salinity"      field_ref="sss_abs"   operation="minimum"                                                 />
-      <field id="sssgrad_abs"      long_name="module of absolute sss gradient"                                                                                 unit="1e-3/m"  grid_ref="grid_T_2D_inner" />
-      <field id="sssgrad2_abs"     long_name="square of module of absolute sss gradient"                                                                       unit="1e-6/m2" grid_ref="grid_T_2D_inner"/>
-      <field id="sbs_abs"          long_name="sea bottom absolute salinity"                                                                                    unit="1e-3"    grid_ref="grid_T_2D_inner"/>
-      <field id="somint_abs"       long_name="vertical integral of absolute salinity times density"        standard_name="integral_wrt_depth_of_product_of_density_and_absolute_salinity"  unit="(kg m2) x (1e-3)" grid_ref="grid_T_2D_inner"/>
   
       <!-- next variables available with ln_zad_Aimp=.true. -->
       <field id="Aimp_Cmx_v"   long_name="Column maximum of vertical Courant number with active adaptive-implicit vertical advection"    operation="maximum" unit="#"  />
@@ -269,8 +228,6 @@ that are available in the tidal-forcing implementation (see
       <field id="sssgrad2"    long_name="square of module of surface salinity gradient"                          unit="1e-6/m2"   />
       <field id="ke_int"      long_name="vertical integration of kinetic energy"                                 unit="m3/s2"     />
       <field id="taubot"      long_name="bottom stress module"                                                   unit="N/m2"      />
-      <field id="htau"         long_name="htau length scale" unit="m"/>
-
   
       <field id="sstgrad"     long_name="module of sst gradient"                                                 unit="degC/m"    />
       <field id="sstgrad2"    long_name="square of module of sst gradient"                                       unit="degC2/m2"  />
@@ -379,18 +336,6 @@ that are available in the tidal-forcing implementation (see
       <field id="toce_e3t"     long_name="temperature (thickness weighted)"                                                    unit="degC"   > toce * e3t </field >
       <field id="soce"         long_name="salinity"                            standard_name="sea_water_practical_salinity"    unit="1e-3"  />
       <field id="soce_e3t"     long_name="salinity    (thickness weighted)"                                                    unit="1e-3"   > soce * e3t </field >
-
-    <!-- EOS80 -->
-      <field id="toce_pot"         long_name="potential temperature"           standard_name="sea_water_potential_temperature"      unit="degC"     grid_ref="grid_T_3D"/>
-      <field id="toce_pot_e3t"     long_name="potential temperature (thickness weighted)"                                           unit="degC"     grid_ref="grid_T_3D" > toce_pot * e3t </field >
-      <field id="soce_pra"         long_name="practical salinity"              standard_name="sea_water_practical_salinity"      unit="1e-3"     grid_ref="grid_T_3D"/>
-      <field id="soce_pra_e3t"     long_name="practical salinity    (thickness weighted)"                                        unit="1e-3"     grid_ref="grid_T_3D" > soce_pra * e3t </field >
-      <!-- TEOS10 -->
-      <field id="toce_con"         long_name="conservative temperature"        standard_name="sea_water_conservative_temperature"   unit="degC"     grid_ref="grid_T_3D"/>
-      <field id="toce_con_e3t"     long_name="conservative temperature (thickness weighted)"                                        unit="degC"     grid_ref="grid_T_3D" > toce_con * e3t </field >
-      <field id="soce_abs"         long_name="absolute salinity"               standard_name="sea_water_absolute_salinity"       unit="1e-3"     grid_ref="grid_T_3D"/>
-      <field id="soce_abs_e3t"     long_name="absolute salinity    (thickness weighted)"                                         unit="1e-3"     grid_ref="grid_T_3D" > soce_abs * e3t </field >
-
   
       <!-- t-eddy viscosity coefficients (ldfdyn) -->
       <field id="ahmt_3d"      long_name=" 3D      t-eddy viscosity coefficient"   unit="m2/s or m4/s"  />
@@ -399,12 +344,6 @@ that are available in the tidal-forcing implementation (see
       <field id="alpha"        long_name="thermal expansion"                                                         unit="degC-1"  />
       <field id="beta"         long_name="haline contraction"                                                        unit="1e3"     />
       <field id="rhop"         long_name="potential density (sigma0)"        standard_name="sea_water_sigma_theta"   unit="kg/m3"   />
-      <field id="N_2d"         long_name="Depth-mean N"                                                              unit="m/s" />
-      <field id="modslp"       long_name="sqrt( slpi^2 + slpj^2 )"                                                   unit="1"      grid_ref="grid_T_3D" />
-      <field id="RossRad"      long_name="Rossby radius"                                                             unit="m" />
-      <field id="RossRadlim"   long_name="Rossby radius (limited)"                                                   unit="m" />
-      <field id="Tclinic_recip" long_name="recip of baroclinic timescale"                                            unit="s-1" />
-      <field id="RR_GS"        long_name="Rossby radius / min(dx,dy)"                                                unit="1" />
   
       <!-- next variables available with ln_zad_Aimp=.true. -->
       <field id="wexp"         long_name="Explicit vertical velocity"                                                unit="m/s"  />
@@ -503,17 +442,10 @@ that are available in the tidal-forcing implementation (see
     <field id="tide_pot_Msqm" long_name="Msqm tidal potential"  unit="m" />
     <field id="tide_pot_Mtm"  long_name="Mtm tidal potential"   unit="m" />
     <field id="tide_pot_S1"   long_name="S1 tidal potential"    unit="m" />
-    <field id="tide_pot_mu2"  long_name="mu2 tidal potential"   unit="m" />
-    <field id="tide_pot_nu2"  long_name="nu2 tidal potential"   unit="m" />
+    <field id="tide_pot_MU2"  long_name="MU2 tidal potential"   unit="m" />
+    <field id="tide_pot_NU2"  long_name="NU2 tidal potential"   unit="m" />
     <field id="tide_pot_L2"   long_name="L2 tidal potential"    unit="m" />
     <field id="tide_pot_T2"   long_name="T2 tidal potential"    unit="m" />
-    <field id="tide_pot_Sa"   long_name="Sa tidal potential"    unit="m" />
-    <field id="tide_pot_Ssa"  long_name="Ssa tidal potential"   unit="m" />
-    <field id="tide_pot_Msf"  long_name="Msf tidal potential"   unit="m" />
-    <field id="tide_pot_J1"   long_name="J1 tidal potential"    unit="m" />
-    <field id="tide_pot_MKS2" long_name="MKS2 tidal potential"  unit="m" />
-    <field id="tide_pot_lam2" long_name="lam2 tidal potential"  unit="m" />
-    <field id="tide_pot_R2"   long_name="R2 tidal potential"    unit="m" />
   </field_group>
 
   <!-- OSMOSIS variables (available with ln_zdfosm=.true.) -->
@@ -650,16 +582,12 @@ that are available in the tidal-forcing implementation (see
 
       <!-- sbcssm variables -->
       <field id="sst_m"    unit="degC"  />
-      <field id="sst_m_pot"    unit="degC" />
       <field id="sss_m"    unit="psu"   />
-      <field id="sss_m_abs"    unit="psu"  />
       <field id="ssu_m"    unit="m/s"   />
       <field id="ssv_m"    unit="m/s"   />
       <field id="ssh_m"    unit="m"     />
       <field id="e3t_m"    unit="m"     />
       <field id="frq_m"    unit="-"     />
-      <!-- EOS-80 -->
-      <field id="sss_m_pra"    unit="psu"  />
 
       <!-- * variable relative to atmospheric pressure forcing : available with ln_apr_dyn -->
       <field id="ssh_ib"       long_name="Inverse barometer sea surface height"  standard_name="sea_surface_height_correction_due_to_air_pressure_at_low_frequency"   unit="m"  />
@@ -828,8 +756,7 @@ that are available in the tidal-forcing implementation (see
       <field id="uocetr_vsum_cumul" long_name="ocean current along i-axis * e3u * e2u cumulated from southwest point" freq_offset="_reset_" operation="instant" freq_op="1mo"  unit="m3/s" />
       <field id="msftbarot"         long_name="ocean_barotropic_mass_streamfunction"  unit="kg s-1"           > uocetr_vsum_cumul * $rho0 </field>
   
-
-      <field id="uoce2_e3u"    long_name="ocean current along i-axis squared (thickness weighted)"                                            unit="m3/s2"      grid_ref="grid_U_3D"  > uoce * uoce * e3u </field>  
+  
       <field id="ssu"          long_name="ocean surface current along i-axis"         unit="m/s"                             />
       <field id="ubar"         long_name="ocean barotropic current along i-axis"      unit="m/s"                             />
       <field id="ssuww"        long_name="ocean surface wind work along i-axis"       standard_name="surface_x_wind_work"    unit="N/m*s" > utau * ssu </field>
@@ -898,7 +825,6 @@ that are available in the tidal-forcing implementation (see
       <field id="hv"            long_name="water column height at V point"           standard_name="water_column_height_V"       unit="m" />
       <field id="e1v"           long_name="V-cell width in longitudinal direction"   standard_name="cell_width"                  unit="m" />
   
-      <field id="voce2_e3v"    long_name="ocean current along j-axis squared (thickness weighted)"                                            unit="m3/s2"      grid_ref="grid_V_3D"  > voce * voce * e3v </field>
       <field id="ssv"          long_name="ocean surface current along j-axis"         unit="m/s"                             />
       <field id="vbar"         long_name="ocean barotropic current along j-axis"      unit="m/s"                             />
       <field id="ssvww"        long_name="ocean surface wind work along j-axis"       standard_name="surface_y_wind_work"    unit="N/m*s" > vtau * ssv </field>
@@ -1355,149 +1281,45 @@ that are available in the tidal-forcing implementation (see
     </field_group>     <!-- End of field group for grid_T_2D_inner (trendT) -->
   </field_group>
 
-  <field_group id="mxltrend" grid_ref="grid_T_2D" prec="8">
-    <field id="mxl_depth"   long_name="mxl-trend: mxl_depth"                           unit="m"/>
-    <field id="tml"         long_name="mxl-trend: tml"                                 unit="degC/day"/>
-    <field id="tml_tot"     long_name="mxl-trend: tml_tot"                             unit="degC/day"/>
-    <field id="tml_res"     long_name="mxl-trend: tml_res"                             unit="degC/day"/>
-    <field id="tml_xad"     long_name="mxl-trend: T Zonal advection "                  unit="degC/day"/>
-    <field id="tml_yad"     long_name="mxl-trend: T Meridional advection"              unit="degC/day"/>
-    <field id="tml_zad"     long_name="mxl-trend: T Vertical advection"                unit="degC/day"/>
-    <field id="tml_ldf"     long_name="mxl-trend: T Lateral diffusion"                 unit="degC/day"/>
-    <field id="tml_for"     long_name="mxl-trend: T Forcing"                           unit="degC/day"/>
-    <field id="tml_zdf"     long_name="mxl-trend: T Vertical diff. (Kz)"               unit="degC/day"/>
-    <field id="tml_bbc"     long_name="mxl-trend: T Geothermal flux"                   unit="degC/day"/>
-    <field id="tml_bbl"     long_name="mxl-trend: T Adv/diff. Bottom boundary layer"   unit="degC/day"/>
-    <field id="tml_dmp"     long_name="mxl-trend: T Tracer damping"                    unit="degC/day"/>
-    <field id="tml_npc"     long_name="mxl-trend: T Non penetrative convec. adjust."   unit="degC/day"/>
-    <field id="tml_zdfp"    long_name="mxl-trend: T iso-neut.: pure vert. diffusion"   unit="degC/day"/>
-    <field id="tml_atf"     long_name="mxl-trend: T Asselin time filter"               unit="degC/day"/>
-    <field id="sml"         long_name="mxl-trend: sml"                                 unit="p.s.u./day"/>
-    <field id="sml_tot"     long_name="mxl-trend: sml_tot"                             unit="p.s.u./day"/>
-    <field id="sml_res"     long_name="mxl-trend: sml_res"                             unit="p.s.u./day"/>
-    <field id="sml_xad"     long_name="mxl-trend: S Zonal advection"                   unit="p.s.u./day"/>
-    <field id="sml_yad"     long_name="mxl-trend: S Meridional advection"              unit="p.s.u./day"/>
-    <field id="sml_zad"     long_name="mxl-trend: S Vertical advection"                unit="p.s.u./day"/>
-    <field id="sml_ldf"     long_name="mxl-trend: S Lateral diffusion"                 unit="p.s.u./day"/>
-    <field id="sml_for"     long_name="mxl-trend: S Forcing"                           unit="p.s.u./day"/>
-    <field id="sml_zdf"     long_name="mxl-trend: S Vertical diff. (Kz)"               unit="p.s.u./day"/>
-    <field id="sml_bbc"     long_name="mxl-trend: S Geothermal flux"                   unit="p.s.u./day"/>
-    <field id="sml_bbl"     long_name="mxl-trend: S Adv/diff. Bottom boundary layer"   unit="p.s.u./day"/>
-    <field id="sml_dmp"     long_name="mxl-trend: S Tracer damping"                    unit="p.s.u./day"/>
-    <field id="sml_npc"     long_name="mxl-trend: S Non penetrative convec. adjust."   unit="p.s.u./day"/>
-    <field id="sml_zdfp"    long_name="mxl-trend: S iso-neut.: pure vert. diffusion"   unit="p.s.u./day"/>
-    <field id="sml_atf"     long_name="mxl-trend: S Asselin time filter"               unit="p.s.u./day"/>
-  </field_group>
-
   <field_group id="trendU" grid_ref="grid_T_3D_inner">
     <!-- variables available with ln_dyn_trd -->
-    <field id="hu"             long_name="total time-varying depth at U-points"                    unit="m"      grid_ref="grid_U_2D"  />
-    <field id="utrd_hpg"       long_name="i-trend: hydrostatic pressure gradient"                  unit="m/s^2"                        />
-    <field id="utrd_spg2d"     long_name="i-trend: surface pressure gradient: true trend"          unit="m/s^2"  grid_ref="grid_U_2D"  />
-    <field id="utrd_keg"       long_name="i-trend: KE gradient         or hor. adv."               unit="m/s^2"                        />
-    <field id="utrd_rvo"       long_name="i-trend: relative  vorticity or metric term"             unit="m/s^2"                        />
-    <field id="utrd_pvo"       long_name="i-trend: planetary vorticity: 3D component"              unit="m/s^2"                        />
-    <field id="utrd_pvo2d"     long_name="i-trend: planetary vorticity: 2D component"              unit="m/s^2"  grid_ref="grid_U_2D"  />
-    <field id="utrd_zad"       long_name="i-trend: vertical  advection"                            unit="m/s^2"                        />
-    <field id="utrd_udx"       long_name="i-trend: U.dx[U]"                                        unit="m/s^2"                        />
-    <field id="utrd_ldf"       long_name="i-trend: lateral   diffusion"                            unit="m/s^2"                        />
-    <field id="utrd_zdf"       long_name="i-trend: vertical  diffusion"                            unit="m/s^2"                        />
-    <field id="utrd_frc2d"     long_name="i-trend: barotropic constant forcing "                   unit="m/s^2"  grid_ref="grid_U_2D"  />
-    <field id="utrd_tau"       long_name="i-trend: wind stress in top layer "                      unit="m/s^2"  grid_ref="grid_U_2D"  />
-    <field id="utrd_tau2d"     long_name="i-trend: wind stress: 2D component "                     unit="m/s^2"  grid_ref="grid_U_2D"  />
-    <field id="utrd_bfr"       long_name="i-trend: bottom friction (3D) in bottom layer"           unit="m/s^2"                        />
-    <field id="utrd_bfr2d"     long_name="i-trend: bottom friction: 2D component"                  unit="m/s^2"  grid_ref="grid_U_2D"  />
-    <field id="utrd_tfr"       long_name="i-trend: top friction (3D) in top layer"                 unit="m/s^2"                        />
-    <field id="utrd_tfr2d"     long_name="i-trend: top friction: 2D component"                     unit="m/s^2"  grid_ref="grid_U_2D"  />
-    <field id="utrd_tot"       long_name="i-trend: total momentum trend before atf"                unit="m/s^2"                        />
-    <field id="utrd_tot2d"     long_name="i-trend: total momentum trend before atf: 2D component"  unit="m/s^2"  grid_ref="grid_U_2D"  />
-    <field id="utrd_atf"       long_name="i-trend: asselin time filter trend"                      unit="m/s^2"                        />
-    <field id="utrd_atm2d"     long_name="i-trend: atmospheric pressure: 2D component "            unit="m/s^2"  grid_ref="grid_U_2D"  />  
-    <field id="utrd_bdy2d"     long_name="i-trend: lateral boundary forcing: 2D component "        unit="m/s^2"  grid_ref="grid_U_2D"  />
-    <field id="utrd_bdy"       long_name="i-trend: lateral boundary forcing "                      unit="m/s^2"                        />
-    <!-- thickness weighted versions -->
-    <field id="utrd_hpg_e3u"       unit="m2/s^2" > utrd_hpg * e3u </field>
-    <field id="utrd_spg_e3u"       unit="m2/s^2" > utrd_spg * e3u </field>
-    <field id="utrd_keg_e3u"       unit="m2/s^2" > utrd_keg * e3u </field>
-    <field id="utrd_rvo_e3u"       unit="m2/s^2" > utrd_rvo * e3u </field>
-    <field id="utrd_pvo_e3u"       unit="m2/s^2" > utrd_pvo * e3u </field>
-    <field id="utrd_zad_e3u"       unit="m2/s^2" > utrd_zad * e3u </field>
-    <field id="utrd_ldf_e3u"       unit="m2/s^2" > utrd_ldf * e3u </field>
-    <field id="utrd_zdf_e3u"       unit="m2/s^2" > utrd_zdf * e3u </field>
-    <field id="utrd_tot_e3u"       unit="m2/s^2" > utrd_tot * e3u </field>
-    <field id="utrd_atf_e3u"       unit="m2/s^2" > utrd_atf * e3u </field>
-    <field id="utrd_bta_e3u"       unit="m2/s^2" > utrd_bta * e3u </field>
-    <field id="utrd_bfr_e3u"       unit="m2/s^2" > utrd_bfr * e3u </field>
-    <field id="utrd_tfr_e3u"       unit="m2/s^2" > utrd_tfr * e3u </field>
-    <field id="utrd_bdy_e3u"       unit="m2/s^2" > utrd_bdy * e3u </field>
-    <field id="utrd_spg2d_hu"      unit="m2/s^2" grid_ref="grid_U_2D" > utrd_spg2d * hu </field>
-    <field id="utrd_pvo2d_hu"      unit="m2/s^2" grid_ref="grid_U_2D" > utrd_pvo2d * hu </field>
-    <field id="utrd_frc2d_hu"      unit="m2/s^2" grid_ref="grid_U_2D" > utrd_frc2d * hu </field>
-    <field id="utrd_tau2d_hu"      unit="m2/s^2" grid_ref="grid_U_2D" > utrd_tau2d * hu </field>
-    <field id="utrd_tfr2d_hu"      unit="m2/s^2" grid_ref="grid_U_2D" > utrd_tfr2d * hu </field>
-    <field id="utrd_bfr2d_hu"      unit="m2/s^2" grid_ref="grid_U_2D" > utrd_bfr2d * hu </field>
-    <field id="utrd_tot2d_hu"      unit="m2/s^2" grid_ref="grid_U_2D" > utrd_tot2d * hu </field>
-    <field id="utrd_atm2d_hu"      unit="m2/s^2" grid_ref="grid_U_2D" > utrd_atm2d * hu </field>
-    <field id="utrd_bdy2d_hu"      unit="m2/s^2" grid_ref="grid_U_2D" > utrd_bdy2d * hu </field>
+    <field id="utrd_hpg"       long_name="i-trend: hydrostatic pressure gradient"          unit="m/s^2"     />
+    <field id="utrd_spg"       long_name="i-trend: surface     pressure gradient"          unit="m/s^2"     />
+    <field id="utrd_spgexp"    long_name="i-trend: surface pressure gradient (explicit)"   unit="m/s^2"     />
+    <field id="utrd_spgflt"    long_name="i-trend: surface pressure gradient (filtered)"   unit="m/s^2"     />
+    <field id="utrd_keg"       long_name="i-trend: KE gradient         or hor. adv."       unit="m/s^2"     />
+    <field id="utrd_rvo"       long_name="i-trend: relative  vorticity or metric term"     unit="m/s^2"     />
+    <field id="utrd_pvo"       long_name="i-trend: planetary vorticity"                    unit="m/s^2"     />
+    <field id="utrd_zad"       long_name="i-trend: vertical  advection"                    unit="m/s^2"     />
+    <field id="utrd_udx"       long_name="i-trend: U.dx[U]"                                unit="m/s^2"     />
+    <field id="utrd_ldf"       long_name="i-trend: lateral   diffusion"                    unit="m/s^2"     />
+    <field id="utrd_zdf"       long_name="i-trend: vertical  diffusion"                    unit="m/s^2"     />
+    <field id="utrd_bfr"       long_name="i-trend: bottom friction (explicit)"             unit="m/s^2"     />
+    <field id="utrd_bfri"      long_name="i-trend: bottom friction (implicit)"             unit="m/s^2"     />
+    <field id="utrd_tot"       long_name="i-trend: total momentum trend before atf"        unit="m/s^2"     />
+    <field id="utrd_atf"       long_name="i-trend: asselin time filter trend"              unit="m/s^2"     />
+    <field id="utrd_tau"       long_name="i-trend: wind stress "                           unit="m/s^2"   grid_ref="grid_U_2D_inner"  />
   </field_group>
 
   <field_group id="trendV" grid_ref="grid_T_3D_inner">
     <!-- variables available with ln_dyn_trd -->
-    <field id="hv"             long_name="total time-varying depth at V-points"                    unit="m"      grid_ref="grid_V_2D"  />
-    <field id="vtrd_hpg"       long_name="j-trend: hydrostatic pressure gradient"                  unit="m/s^2"                        />
-    <field id="vtrd_spg"       long_name="j-trend: surface     pressure gradient"                  unit="m/s^2"                        />
-    <field id="vtrd_spg2d"     long_name="j-trend: surface pressure gradient: true trend"          unit="m/s^2"  grid_ref="grid_V_2D"  />
-    <field id="vtrd_keg"       long_name="j-trend: KE gradient         or hor. adv."               unit="m/s^2"                        />
-    <field id="vtrd_rvo"       long_name="j-trend: relative  vorticity or metric term"             unit="m/s^2"                        />
-    <field id="vtrd_pvo"       long_name="j-trend: planetary vorticity: 3D component"              unit="m/s^2"                        />
-    <field id="vtrd_pvo2d"     long_name="j-trend: planetary vorticity: 2D component"              unit="m/s^2"  grid_ref="grid_V_2D"  />
-    <field id="vtrd_zad"       long_name="j-trend: vertical  advection"                            unit="m/s^2"                        />
-    <field id="vtrd_vdy"       long_name="j-trend: V.dx[V]"                                        unit="m/s^2"                        />
-    <field id="vtrd_ldf"       long_name="j-trend: lateral   diffusion"                            unit="m/s^2"                        />
-    <field id="vtrd_zdf"       long_name="j-trend: vertical  diffusion"                            unit="m/s^2"                        />
-    <field id="vtrd_frc2d"     long_name="j-trend: barotropic constant forcing "                   unit="m/s^2"  grid_ref="grid_V_2D"  />
-    <field id="vtrd_tau"       long_name="j-trend: wind stress in top layer "                      unit="m/s^2"  grid_ref="grid_V_2D"  />
-    <field id="vtrd_tau2d"     long_name="j-trend: wind stress: 2D component "                     unit="m/s^2"  grid_ref="grid_V_2D"  />
-    <field id="vtrd_bfr"       long_name="j-trend: bottom friction (3D) in bottom layer"           unit="m/s^2"                        />
-    <field id="vtrd_bfr2d"     long_name="j-trend: bottom friction: 2D component"                  unit="m/s^2"  grid_ref="grid_V_2D"  />
-    <field id="vtrd_tfr"       long_name="j-trend: top friction (3D) in top layer"                 unit="m/s^2"                        />
-    <field id="vtrd_tfr2d"     long_name="j-trend: top friction: 2D component"                     unit="m/s^2"  grid_ref="grid_V_2D"  />
-    <field id="vtrd_tot"       long_name="j-trend: total momentum trend before atf"                unit="m/s^2"                        />
-    <field id="vtrd_tot2d"     long_name="j-trend: total momentum trend before atf: 2D component"  unit="m/s^2"  grid_ref="grid_V_2D"  />
-    <field id="vtrd_atf"       long_name="j-trend: asselin time filter trend"                      unit="m/s^2"                        />
-    <field id="vtrd_atm2d"     long_name="j-trend: atmospheric pressure: 2D component "            unit="m/s^2"  grid_ref="grid_V_2D"  />
-    <field id="vtrd_bdy2d"     long_name="j-trend: lateral boundary forcing: 2D component "        unit="m/s^2"  grid_ref="grid_V_2D"  />
-    <field id="vtrd_bdy"       long_name="j-trend: lateral boundary forcing "                      unit="m/s^2"                        />
-    <!-- thickness weighted versions -->
-    <field id="vtrd_hpg_e3v"       unit="m2/s^2" > vtrd_hpg * e3v </field>
-    <field id="vtrd_spg_e3v"       unit="m2/s^2" > vtrd_spg * e3v </field>
-    <field id="vtrd_keg_e3v"       unit="m2/s^2" > vtrd_keg * e3v </field>
-    <field id="vtrd_rvo_e3v"       unit="m2/s^2" > vtrd_rvo * e3v </field>
-    <field id="vtrd_pvo_e3v"       unit="m2/s^2" > vtrd_pvo * e3v </field>
-    <field id="vtrd_zad_e3v"       unit="m2/s^2" > vtrd_zad * e3v </field>
-    <field id="vtrd_ldf_e3v"       unit="m2/s^2" > vtrd_ldf * e3v </field>
-    <field id="vtrd_zdf_e3v"       unit="m2/s^2" > vtrd_zdf * e3v </field>
-    <field id="vtrd_tot_e3v"       unit="m2/s^2" > vtrd_tot * e3v </field>
-    <field id="vtrd_atf_e3v"       unit="m2/s^2" > vtrd_atf * e3v </field>
-    <field id="vtrd_bta_e3v"       unit="m2/s^2" > vtrd_bta * e3v </field>
-    <field id="vtrd_bfr_e3v"       unit="m2/s^2" > vtrd_bfr * e3v </field>
-    <field id="vtrd_tfr_e3v"       unit="m2/s^2" > vtrd_tfr * e3v </field>
-    <field id="vtrd_bdy_e3v"       unit="m2/s^2" > vtrd_bdy * e3v </field>
-    <field id="vtrd_spg2d_hv"      unit="m2/s^2" grid_ref="grid_V_2D" > vtrd_spg2d * hv </field>
-    <field id="vtrd_pvo2d_hv"      unit="m2/s^2" grid_ref="grid_V_2D" > vtrd_pvo2d * hv </field>
-    <field id="vtrd_frc2d_hv"      unit="m2/s^2" grid_ref="grid_V_2D" > vtrd_frc2d * hv </field>
-    <field id="vtrd_tau2d_hv"      unit="m2/s^2" grid_ref="grid_V_2D" > vtrd_tau2d * hv </field>
-    <field id="vtrd_tfr2d_hv"      unit="m2/s^2" grid_ref="grid_V_2D" > vtrd_tfr2d * hv </field>
-    <field id="vtrd_bfr2d_hv"      unit="m2/s^2" grid_ref="grid_V_2D" > vtrd_bfr2d * hv </field>
-    <field id="vtrd_tot2d_hv"      unit="m2/s^2" grid_ref="grid_V_2D" > vtrd_tot2d * hv </field>
-    <field id="vtrd_atm2d_hv"      unit="m2/s^2" grid_ref="grid_V_2D" > vtrd_atm2d * hv </field>
-    <field id="vtrd_bdy2d_hv"      unit="m2/s^2" grid_ref="grid_V_2D" > vtrd_bdy2d * hv </field>
+    <field id="vtrd_hpg"       long_name="j-trend: hydrostatic pressure gradient"          unit="m/s^2"     />
+    <field id="vtrd_spg"       long_name="j-trend: surface     pressure gradient"          unit="m/s^2"     />
+    <field id="vtrd_spgexp"    long_name="j-trend: surface pressure gradient (explicit)"   unit="m/s^2"     />
+    <field id="vtrd_spgflt"    long_name="j-trend: surface pressure gradient (filtered)"   unit="m/s^2"     />
+    <field id="vtrd_keg"       long_name="j-trend: KE gradient         or hor. adv."       unit="m/s^2"     />
+    <field id="vtrd_rvo"       long_name="j-trend: relative  vorticity or metric term"     unit="m/s^2"     />
+    <field id="vtrd_pvo"       long_name="j-trend: planetary vorticity"                    unit="m/s^2"     />
+    <field id="vtrd_zad"       long_name="j-trend: vertical  advection"                    unit="m/s^2"     />
+    <field id="vtrd_vdy"       long_name="i-trend: V.dx[V]"                                unit="m/s^2"     />
+    <field id="vtrd_ldf"       long_name="j-trend: lateral   diffusion"                    unit="m/s^2"     />
+    <field id="vtrd_zdf"       long_name="j-trend: vertical  diffusion"                    unit="m/s^2"     />
+    <field id="vtrd_bfr"       long_name="j-trend: bottom friction (explicit)"             unit="m/s^2"     />
+    <field id="vtrd_bfri"      long_name="j-trend: bottom friction (implicit)"             unit="m/s^2"     />
+    <field id="vtrd_tot"       long_name="j-trend: total momentum trend before atf"        unit="m/s^2"     />
+    <field id="vtrd_atf"       long_name="j-trend: asselin time filter trend"              unit="m/s^2"     />
+    <field id="vtrd_tau"       long_name="j-trend: wind stress "                           unit="m/s^2"   grid_ref="grid_V_2D_inner"  />
   </field_group>
-
-  <field_group id="DCT"  grid_ref="grid_allstraits" >
-    <field id="mfo"                  long_name="Sea water mass transport across line"  />
-    <field id="sfo"                  long_name="Salinity transport across line"  />
-    <field id="hfo"                  long_name="Heat transport across line"  />  </field_group>
 
   <!-- shared variables available with TOP interface -->
   <field_group id="top_shared">
@@ -1543,7 +1365,7 @@ that are available in the tidal-forcing implementation (see
     <field field_ref="qsr"          name="rsntds"   long_name="surface_net_downward_shortwave_flux"           />
     <field field_ref="qt"           name="tohfls"   long_name="surface_net_downward_total_heat_flux"          />
     <field field_ref="taum"                                                                                   />
-    <field field_ref="20d"    axis_ref="iax_20C"                                                                                />
+    <field field_ref="20d"                                                                                    />
     <field field_ref="mldkz5"                                                                                 />
     <field field_ref="mldr10_1"                                                                               />
     <field field_ref="mldr10_3"                                                                               />
@@ -1572,7 +1394,7 @@ that are available in the tidal-forcing implementation (see
     <field field_ref="taum"                                                                                   />
     <field field_ref="utau"         name="tauuo"    long_name="surface_downward_x_stress"                     />
     <field field_ref="vtau"         name="tauvo"    long_name="surface_downward_y_stress"                     />
-    <field field_ref="20d"    axis_ref="iax_20C"                                                                                />
+    <field field_ref="20d"                                                                                    />
     <field field_ref="mldkz5"                                                                                 />
     <field field_ref="mldr10_1"                                                                               />
     <field field_ref="mldr10_3"                                                                               />
