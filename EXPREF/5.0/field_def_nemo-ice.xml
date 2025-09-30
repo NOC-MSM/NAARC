@@ -207,6 +207,15 @@ standard_name="rft_loss"                                 unit="1/s"  />
       <field id="icedrift_salt" long_name="Ice salt drift (conservation check)"   unit="kg/m2/s" />
       <field id="icedrift_heat" long_name="Ice heat drift (conservation check)"   unit="W/m2"    />
 
+      <!-- sbcssm variables -->
+      <field id="sst_m"    unit="degC" />
+      <field id="sss_m"    unit="psu"  />
+      <field id="ssu_m"    unit="m/s"  />
+      <field id="ssv_m"    unit="m/s"  />
+      <field id="ssh_m"    unit="m"    />
+      <field id="e3t_m"    unit="m"    />
+      <field id="frq_m"    unit="-"    />
+
       <!-- rheology convergence tests -->
       <field id="uice_cvg"   long_name="sea ice velocity convergence"      standard_name="sea_ice_velocity_convergence"      unit="m/s" />
 
