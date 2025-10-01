@@ -124,7 +124,7 @@ dynhpg.F90 Didn't need updating, no changes.
 dynspg.F90 Didn't need updating, no changes.
 dynvor.F90 Didn't need updating, no changes.
 dynzdf.F90 Didn't need updating, no changes.
-sbcmod.F90 Didn't need updating, no changes.
+sbcmod.F90 Done.
 trddyn.F90 Didn't need updating, no changes.
 trdini.F90. Done.
 dynspg_ts.F90 updated changes from 4.2.2 MY_SRC.
@@ -257,5 +257,13 @@ Updating EXPREF/field_def_nemo-oce.xml to v5. The tidal harmonics have been chan
     at /work/n01/n01/benbar/NAARC/NAARC_RUNS/nemo/cfgs/NAARC/BLD/ppsrc/nemo/nemogcm.f90:186
 
 Try using v5 default .xml files instead of custom ones.
+Error didn't change so I guess keep the custom ones.
 
-#Try converting sbcmod to v5 but only sst bits not ice bits.
+According to James the nn_ice bits in sbcmod should be included in sbcmod.F90.
+
+I've re-checked the files I previously marked as "Didn't need updating" and some of them do need updating now I'm comparing the right nemo versions.
+I've made changes to main MY_SRC:
+diadct.F90, dynspg_ts.F90, iom.F90, ldftra.F90, traldf.F90, traqsr.F90
+
+Momentum MY_SRC:
+dynhpg.F90, dynspg.F90, dynvor.F90, dynzdf.F90, sbcmod.F90, trd_oce.F90, trddyn.F90
