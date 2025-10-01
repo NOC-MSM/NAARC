@@ -705,7 +705,8 @@ CONTAINS
          zRo_lim(ji,jj) = MAX(  2.e3 , MIN( zRo(ji,jj), 40.e3 )  )
          ! Compute aeiw by multiplying Ro^2 and T^-1
          zTclinic_recip(ji,jj) = SQRT( MAX(zah(ji,jj),0._wp) / zhw(ji,jj) ) * tmask(ji,jj,1)
-         zaeiw(ji,jj) = zRo_lim(ji,jj) * zRo_lim(ji,jj) * zTclinic_recip(ji,jj)       END_2D
+         zaeiw(ji,jj) = zRo_lim(ji,jj) * zRo_lim(ji,jj) * zTclinic_recip(ji,jj) 
+      END_2D
       IF( iom_use('N_2d') ) CALL iom_put('N_2d',zn(:,:)/zhw(:,:))
       IF( iom_use('modslp') ) CALL iom_put('modslp',SQRT(zmodslp(:,:,:)) )
       CALL iom_put('RossRad',zRo)
