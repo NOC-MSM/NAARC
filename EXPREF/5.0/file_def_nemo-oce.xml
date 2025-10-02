@@ -94,7 +94,6 @@
 	  <field field_ref="emp_ice"      name="soemp_ice"  />
 	  <field field_ref="snowpre"      name="snowpre"    />
 	  <field field_ref="precip"       name="soprecip"   />
-	  <!-- field field_ref="fmmflx"       name="fsitherm"   -->
 	  <field field_ref="runoffs"      name="friver"     />
 	  <field field_ref="erp"          name="so_erp"     />
 	  <field field_ref="saltflx"      name="sfdsi"      />
@@ -175,7 +174,6 @@
           <field field_ref="emp_ice"      name="soemp_ice"  />
           <field field_ref="snowpre"      name="snowpre"    />
           <field field_ref="precip"       name="soprecip"   />
-          <!--field field_ref="fmmflx"       name="fsitherm"   -->
           <field field_ref="runoffs"      name="friver"     />
           <field field_ref="erp"          name="so_erp"     />
           <field field_ref="saltflx"      name="sfdsi"      />

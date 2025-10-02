@@ -275,3 +275,4 @@ In file "field.cpp", function "void xios::CField::solveGridReference()",  line 1
 604 -> A grid must be defined for field 'fsitherm' .
 
 Commented out fsitherm in file_def_nemo-oce.xml.
+Deleted line fsitherm in file_def_nemo-oce.xml.
