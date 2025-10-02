@@ -52,7 +52,7 @@ MODULE diawri
    USE lbclnk         ! ocean lateral boundary conditions (or mpp link)
    USE in_out_manager ! I/O manager
    USE dia25h         ! 25h Mean output
-   USE diapea         ! Potential Energy Anomaly
+   !USE diapea         ! Potential Energy Anomaly
    USE iom            ! 
    USE ioipsl         ! 
 
@@ -508,7 +508,7 @@ CONTAINS
       CALL iom_put( "bn2", rn2 )                   ! Brunt-Vaisala buoyancy frequency (N^2)
 
       IF (l_dia25h)   CALL dia_25h( kt, Kmm )      ! 25h averaging
-      IF (ln_pea   )   CALL dia_pea( kt, Kmm )     ! pea stats   !slwa
+      !IF (ln_pea   )   CALL dia_pea( kt, Kmm )     ! pea stats   !slwa
 
       ! Output of surface vorticity terms
       !

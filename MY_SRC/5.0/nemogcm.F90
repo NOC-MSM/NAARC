@@ -55,7 +55,7 @@ MODULE nemogcm
    USE cpl_oasis3     ! OASIS3 coupling
    USE step_diu       ! diurnal bulk SST timestepping (called from here if run offline)
    USE dia25h  , ONLY : dia_25h_init   ! 25h mean output (initialisation)
-   USE diapea  , ONLY : dia_pea_init   ! pea output (initialisation)  ! slwa
+   !USE diapea  , ONLY : dia_pea_init   ! pea output (initialisation)  ! slwa
    USE c1d            ! 1D configuration
 #if defined key_top
    USE trcini         ! passive tracer initialisation

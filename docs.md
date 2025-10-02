@@ -276,3 +276,11 @@ In file "field.cpp", function "void xios::CField::solveGridReference()",  line 1
 
 Commented out fsitherm in file_def_nemo-oce.xml.
 Deleted line fsitherm in file_def_nemo-oce.xml.
+
+Slurm-\*.out error:
+STOP from timing: try to stop stp_MLF but we point toward dia_wri, MPI rank: 10
+
+Moved dia_wri.F90 out of MY_SRC to see if it makes a difference.
+It did make a difference, it still doesn't run but it made some output.abort.nc files. Perhaps the problem is the diapea.F90 file called by diawri.F90. Commented out diapea.
+
+
