@@ -267,3 +267,11 @@ diadct.F90, dynspg_ts.F90, iom.F90, ldftra.F90, traldf.F90, traqsr.F90
 
 Momentum MY_SRC:
 dynhpg.F90, dynspg.F90, dynvor.F90, dynzdf.F90, sbcmod.F90, trd_oce.F90, trddyn.F90
+
+Still having the same segmentation fault in backtrace.
+Error in slurm-\*.out:
+
+In file "field.cpp", function "void xios::CField::solveGridReference()",  line 1
+604 -> A grid must be defined for field 'fsitherm' .
+
+Commented out fsitherm in file_def_nemo-oce.xml.
