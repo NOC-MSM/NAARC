@@ -281,6 +281,31 @@ Slurm-\*.out error:
 STOP from timing: try to stop stp_MLF but we point toward dia_wri, MPI rank: 10
 
 Moved dia_wri.F90 out of MY_SRC to see if it makes a difference.
-It did make a difference, it still doesn't run but it made some output.abort.nc files. Perhaps the problem is the diapea.F90 file called by diawri.F90. Commented out diapea.
+It did make a difference, it still doesn't run but it made some output.abort.nc files.
+slurm error:
+-> report :  Memory report : Context <nemo> : client side : total memory used fo
+r buffer 43198880 bytes
 
+ocean.output error:
+  ===>>> : E R R O R
+
+          ===========
+
+   stp_ctl: |ssh| > 20 m  or  |U| > 10 m/s  or  S <= 0  or  S >= 100  or  NaN encounter in the tests
+ 
+ kt 2 |ssh| max    Infinity at i j   3564 1967    found in   24 MPI tasks, spread out among ranks  156 to 1110
+ kt 2 |U|   max   9.561     at i j k 2732 2671  1 MPI rank  586
+ kt 2 |V|   max   10.33     at i j k 2732 2670  1 MPI rank  586
+ kt 2 Sal   min   1.020     at i j k  674 3527  1 MPI rank 1389
+ kt 2 Sal   max   39.21     at i j k 3848 2492 30 MPI rank  454
+ 
+        ===> output of last computed fields in output.abort* files
+
+
+Perhaps the problem is the diapea.F90 file called by diawri.F90. Commented out diapea.
+
+Same Slurm-\*.out error as earlier:
+STOP from timing: try to stop stp_MLF but we point toward dia_wri, MPI rank: 10
+
+diapea was false in the namelist anyway.
 

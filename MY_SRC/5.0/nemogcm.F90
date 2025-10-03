@@ -55,7 +55,7 @@ MODULE nemogcm
    USE cpl_oasis3     ! OASIS3 coupling
    USE step_diu       ! diurnal bulk SST timestepping (called from here if run offline)
    USE dia25h  , ONLY : dia_25h_init   ! 25h mean output (initialisation)
-   !USE diapea  , ONLY : dia_pea_init   ! pea output (initialisation)  ! slwa
+   USE diapea  , ONLY : dia_pea_init   ! pea output (initialisation)  ! slwa
    USE c1d            ! 1D configuration
 #if defined key_top
    USE trcini         ! passive tracer initialisation
@@ -497,7 +497,7 @@ CONTAINS
                            CALL     trd_init( Nnn )    ! Mixed-layer/Vorticity/Integral constraints trends
                            CALL dia_obs_init( Nnn )    ! Initialize observational data
       ! move to stprk3 !   CALL dia_25h_init( Nbb )    ! 25h mean  outputs
-      !                     CALL dia_pea_init( Nnn )    ! pea outputs    ! slwa
+                           CALL dia_pea_init( Nnn )    ! pea outputs    ! slwa
                            CALL dia_detide_init ! Weights computation for daily detiding of model diagnostics
       IF( ln_diaobs    )   CALL dia_obs( nit000-1, Nnn )   ! Observation operator for restart
                            CALL dia_mlr_init    ! Initialisation of IOM context management for multiple-linear-regression analysis
