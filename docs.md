@@ -321,4 +321,5 @@ Add ldfevi bit to diawri.F90.
 It got past the diawri issue so the problem must be with the equation of state (EOS) pot/con and abs/pra types.
 
 Try adding part of the EOS bit only temperature.
+Previous slurm error with dia_wri.
 

@@ -64,7 +64,6 @@ MODULE diawri
    USE timing          ! preformance summary
    USE diu_bulk        ! diurnal warm layer
    USE diu_coolskin    ! Cool skin
-   USE eosbn2
 
    IMPLICIT NONE
    PRIVATE
@@ -111,33 +110,8 @@ CONTAINS
       REAL(wp)::   ztau1, ztau2, ztau3, ztau4    ! local scalar
       REAL(wp), DIMENSION(T2D(0))     ::   z2d   ! 2D workspace
       REAL(wp), DIMENSION(T2D(0),jpk) ::   z3d   ! 3D workspace
-      CHARACTER(len=4),SAVE :: ttype , stype           ! temperature and salinity type
       !!----------------------------------------------------------------------
       ! 
-      IF( ln_timing )   CALL timing_start('dia_wri')
-      !
-      IF( kt == nit000 ) THEN
-         IF( ln_TEOS10 ) THEN
-            IF ( iom_use("toce_pot") .OR. iom_use("soce_pra") .OR. iom_use("sst_pot") .OR. iom_use("sss_pra") &
-                  & .OR. iom_use("sbt_pot") .OR. iom_use("sbs_pra") .OR. iom_use("sstgrad_pot") .OR. iom_use("sstgrad2_pot") &
-                  & .OR. iom_use("tosmint_pot") .OR. iom_use("somint_pra"))  THEN 
-               CALL ctl_stop( 'diawri: potential temperature and practical salinity not available with ln_TEOS10' )
-            ELSE
-               ttype='con' ; stype='abs'   ! teos-10 using conservative temperature and absolute salinity
-            ENDIF 
-         ELSE IF( ln_EOS80  ) THEN
-            IF ( iom_use("toce_con") .OR. iom_use("soce_abs") .OR. iom_use("sst_con") .OR. iom_use("sss_abs") &
-                  & .OR. iom_use("sbt_con") .OR. iom_use("sbs_abs") .OR. iom_use("sstgrad_con") .OR. iom_use("sstgrad2_con") &
-                  & .OR. iom_use("tosmint_con") .OR. iom_use("somint_abs"))  THEN 
-               CALL ctl_stop( 'diawri: conservative temperature and absolute salinity not available with ln_EOS80' )
-            ELSE
-               ttype='pot' ; stype='pra'   ! eos-80 using potential temperature and practical salinity
-            ENDIF
-         ELSE IF ( ln_SEOS) THEN
-            ttype='seos' ; stype='seos' ! seos using Simplified Equation of state
-         ENDIF
-      ENDIF
-
       IF( ln_timing )   CALL timing_start('dia_wri')
       !
       IF( .NOT. l_istiled .OR. ntile == 1 )  THEN   ! Do only for the first tile
@@ -234,8 +208,9 @@ CONTAINS
 #endif
 
       ! --- tracers T&S --- !
-      CALL iom_put( "toce_"//ttype, ts(:,:,:,jp_tem,Kmm) )    ! 3D temperature
-      CALL iom_put(  "sst_"//ttype, ts(:,:,1,jp_tem,Kmm) )    ! surface temperature
+      CALL iom_put( "toce", ts(:,:,:,jp_tem,Kmm) )    ! 3D temperature
+      CALL iom_put(  "sst", ts(:,:,1,jp_tem,Kmm) )    ! surface temperature
+
       IF ( iom_use("sbt") ) THEN
          DO_2D( 0, 0, 0, 0 )
             ikbot = mbkt(ji,jj)
