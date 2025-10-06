@@ -307,5 +307,9 @@ Perhaps the problem is the diapea.F90 file called by diawri.F90. Commented out d
 Same Slurm-\*.out error as earlier:
 STOP from timing: try to stop stp_MLF but we point toward dia_wri, MPI rank: 10
 
-diapea was false in the namelist anyway.
+diapea was false in the namelist anyway. ln_zdftke is also false. ln_ldfeiv is false. Could be teos10. Edit namelist_cfg_template to turn teos10 off.
+
+Didn't help.
+
+Starting with fresh v5.0 diawri.F90 and slowly adding bit of MY_SRC.
 
