@@ -315,4 +315,8 @@ Starting with fresh v5.0 diawri.F90 and slowly adding bit of MY_SRC.
 It got past the diawri issue.
 
 Adding zdftke htau to diawri.F90.
+It got past the diawri issue.
+
+Add ldfevi bit to diawri.F90.
+
 

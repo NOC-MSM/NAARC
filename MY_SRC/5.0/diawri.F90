@@ -456,6 +456,14 @@ CONTAINS
 
       ENDIF
 
+      IF( (.NOT.l_ldfeiv_time) .AND. ( iom_use('RossRad')  .OR. iom_use('RossRadlim') &
+            &                     .OR. iom_use('Tclinic_recip') .OR. iom_use('RR_GS')      &
+            &                     .OR. iom_use('aeiu_2d')  .OR. iom_use('aeiv_2d') ) ) THEN
+         CALL ldf_eiv(kt, 75.0, z2d, z3d(:,:,1),Kmm)
+         CALL iom_put('aeiu_2d', z2d)
+         CALL iom_put('aeiv_2d', z3d(:,:,1))
+      ENDIF
+
       IF( iom_use("tosmint") ) THEN
          z2d(:,:) = 0._wp
          DO_3D( 0, 0, 0, 0, 1, jpkm1 )
