@@ -312,4 +312,7 @@ diapea was false in the namelist anyway. ln_zdftke is also false. ln_ldfeiv is f
 Didn't help.
 
 Starting with fresh v5.0 diawri.F90 and slowly adding bit of MY_SRC.
+It got past the diawri issue.
+
+Adding zdftke htau to diawri.F90.
 
