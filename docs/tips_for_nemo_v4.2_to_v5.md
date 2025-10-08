@@ -8,7 +8,7 @@ INPUTS was empty because a folder for 5.0 did not exist in /work/n01/shared/NAAR
 
 Changes have been made to translate the namelist_cfg_template and namelist_ice_cfg_template to v5 namelists by removing variables not present in the v5 namelist_ref. This was done by comparing v4.2.2 namelist_ref and v5.0 namelist_ref with tkdiff. Some variables changed name in namelist_cfg_template namsbc_blk, changed csw, csa, cra, crw, cfa, cfw to rn_Cs_io, rn_Cs_ia, rn_Cr_ia, rn_Cr_io, rn_Cf_ia, rn_Cf_io. 
 
-Values of variables have been left unchanged with the exeption of rn_alb_dpnd and nn_fct_imp. rn_alb_dpnd which was set to 0.30 but a new comment suggest that is outside the obs range 0.12 -- 0.25 so the new default 0.18 has be used for rn_alb_dpnd. I've set nn_fct_imp = 2 (default is 1) because nn_fct_h and nn_ft_v = 4 which is non-default. **Not sure about this**
+Values of variables have been left unchanged with the exeption of rn_alb_dpnd and nn_fct_imp. rn_alb_dpnd which was set to 0.30 but a new comment suggest that is outside the obs range 0.12 -- 0.25 so the new default 0.18 has be used for rn_alb_dpnd. I've left nn_fct_imp out of the namelist but perhaps change it in the future. 
 
 rn_frm_ht0 was left out of the v5 namelist_cfg_template because ice form drag is included in nemo v5. This means the ice\*.F90 files probably won't need to be carried over in MY_SRC.
 
