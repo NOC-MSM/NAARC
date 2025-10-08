@@ -323,3 +323,18 @@ It got past the diawri issue so the problem must be with the equation of state (
 Try adding part of the EOS bit only temperature.
 Previous slurm error with dia_wri.
 
+Removed problematic EOS code from diawri.F90 again to continue. Something to come back to.
+The abort output with ssh going to infinate persists.
+
+Slurm error:
+slurmstepd: error: Detected 1 oom-kill event(s) in StepId=11088795.0+0. Some of your processes may have been killed by the cgroup out-of-memory handler.
+srun: error: nid003400: task 1275: Out Of Memory
+
+Tried turning boundaries off in the namelist_cfg_template. Slurm error still related to Out Of Memory but at earlier stage (line 1567 instead of 3094). No error in the ocean.output and no abort files produced. core file produced.
+
+Setting nn_fsbc = 0 made a core file.
+Setting ln_blk, ln_traqsr and ln_ssr to false, nn_ice = 0. Error about SI3 needing blk.
+Setting ln_blk = true but rest off. Error still out of memory.
+
+
+
