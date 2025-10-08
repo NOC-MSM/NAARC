@@ -326,6 +326,21 @@ Previous slurm error with dia_wri.
 Removed problematic EOS code from diawri.F90 again to continue. Something to come back to.
 The abort output with ssh going to infinate persists.
 
+ocean.output error:
+  ===>>> : E R R O R
+
+          ===========
+
+   stp_ctl: |ssh| > 20 m  or  |U| > 10 m/s  or  S <= 0  or  S >= 100  or  NaN encounter in the tests
+ 
+ kt 2 |ssh| max    Infinity at i j   3564 1967    found in   24 MPI tasks, spread out among ranks  156 to 1110
+ kt 2 |U|   max   9.561     at i j k 2732 2671  1 MPI rank  586
+ kt 2 |V|   max   10.33     at i j k 2732 2670  1 MPI rank  586
+ kt 2 Sal   min   1.020     at i j k  674 3527  1 MPI rank 1389
+ kt 2 Sal   max   39.21     at i j k 3848 2492 30 MPI rank  454
+ 
+        ===> output of last computed fields in output.abort* files
+
 Slurm error:
 slurmstepd: error: Detected 1 oom-kill event(s) in StepId=11088795.0+0. Some of your processes may have been killed by the cgroup out-of-memory handler.
 srun: error: nid003400: task 1275: Out Of Memory
@@ -335,6 +350,12 @@ Tried turning boundaries off in the namelist_cfg_template. Slurm error still rel
 Setting nn_fsbc = 0 made a core file.
 Setting ln_blk, ln_traqsr and ln_ssr to false, nn_ice = 0. Error about SI3 needing blk.
 Setting ln_blk = true but rest off. Error still out of memory.
+
+Set namelist back to normal. The abort files suggest the blow up is happening in the Arctic.
+Trying turning the sea ice (key_si3) off in the cpp compile. Made a core file without any clues.
+Turn sea ice back on. Isabella from MO said they had similar issues in the beginning with this error which in our case was found to be related with vectorisation.
+Adding the following to the FCFLAGS:
+-hvector0 -Ovector0
 
 
 
