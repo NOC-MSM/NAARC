@@ -41,7 +41,7 @@
 
 %CPP                 cpp -Dkey_nosignedzero -P -traditional
 %FC                  ftn
-%FCFLAGS             -fdefault-double-8 -fdefault-real-8 -O0 -g -funroll-all-loops -fcray-pointer -ffree-line-length-none -w -fallow-argument-mismatch -hvector0 -Ovector0
+%FCFLAGS             -fdefault-double-8 -fdefault-real-8 -hvector0 -O0 -g -funroll-all-loops -fcray-pointer -ffree-line-length-none -w -fallow-argument-mismatch 
 %FFLAGS              -fdefault-double-8 -fdefault-real-8 -O0 -g -funroll-all-loops -fcray-pointer -ffree-line-length-none -w -fallow-argument-mismatch
 %LD                  ftn -lmpichf90
 %FPPFLAGS            -P -traditional
