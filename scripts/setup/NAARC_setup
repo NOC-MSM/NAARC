@@ -47,6 +47,14 @@ while getopts p:r:m:n:x:c:a:d option
   esac
 done
 
+echo  "$WORK_DIR"
+echo  "$REPO_DIR"
+echo  "$HPC_TARG"
+echo  "$NEMO_VER"
+echo  "$XIOS_VER"
+echo  "$COMPILER"
+echo   "$MPI_TARG"
+
 # Validate required arguments
         if [[ -z "$WORK_DIR" || -z "$REPO_DIR" || -z "$HPC_TARG" || -z "$NEMO_VER" || -z "$XIOS_VER" || -z "$COMPILER" || -z "$MPI_TARG" ]]
 	then
@@ -126,13 +134,25 @@ case "${NEMO_VER}"
     4.2)
            git clone --filter=blob:none --no-checkout --depth 1 --sparse --branch branch_4.2 https://forge.nemo-ocean.eu/nemo/nemo.git nemo
            cd nemo
-           git sparse-checkout add /makenemo /mk /src /cfgs/SHARED /cfgs/ref_cfgs.txt /ext
+           case "${HPC_TARG}"
+             in
+             archer2) git sparse-checkout add /makenemo /mk /src /cfgs/SHARED /cfgs/ref_cfgs.txt /ext
+	              ;;
+             *)       git sparse-checkout add makenemo mk src cfgs/SHARED cfgs/ref_cfgs.txt ext
+	              ;;
+           esac
            git checkout
            ;;
   4.2.2|4.2.3)
            git clone --filter=blob:none --no-checkout --depth 1 --sparse --branch $NEMO_VER https://forge.nemo-ocean.eu/nemo/nemo.git nemo
            cd nemo
-           git sparse-checkout add /makenemo /mk /src /cfgs/SHARED /cfgs/ref_cfgs.txt /ext
+           case "${HPC_TARG}"
+             in
+             archer2) git sparse-checkout add /makenemo /mk /src /cfgs/SHARED /cfgs/ref_cfgs.txt /ext
+	              ;;
+             *)       git sparse-checkout add makenemo mk src cfgs/SHARED cfgs/ref_cfgs.txt ext
+	              ;;
+             esac
 	   git checkout
            ;;
 esac
@@ -212,7 +232,7 @@ else
              ln -s /work/n01/shared/nemo/FORCING/JRA FORCING
              ;;
     anemone) ln -s /dssgfs01/working/jdha/NAARC/$NEMO_VER INPUTS
-             ln -s /dssgfs01/working/acc/FORCING FORCING
+             ln -s /dssgfs01/working/acc/FORCING/JRA FORCING
              ;;
 #   metO) ln -s /path/to/inputs/$NEMO_VER INPUTS
 #            ln -s /path/to/forcing FORCING

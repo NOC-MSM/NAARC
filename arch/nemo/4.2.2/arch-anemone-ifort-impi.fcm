@@ -40,7 +40,7 @@
 %XIOS_LIB            -L%XIOS_HOME/lib -lxios -lstdc++
 
 %CPP                 cpp
-%FC                  mpiifort -c -fpp -fpp-name:/opt/software/eb/software/GCCcore/11.2.0/bin/cpp -Wp,-P,-traditional
+%FC                  mpiifort -c -fpp -fpp-name:/opt/software/rocky9/eb/software/GCCcore/12.3.0/bin/cpp -Wp,-P,-traditional
 %FCFLAGS             -i4 -r8 -O3 -fp-model precise -fno-alias
 %FFLAGS              %FCFLAGS
 %LD                  mpiifort
