@@ -354,8 +354,15 @@ Setting ln_blk = true but rest off. Error still out of memory.
 Set namelist back to normal. The abort files suggest the blow up is happening in the Arctic.
 Trying turning the sea ice (key_si3) off in the cpp compile. Made a core file without any clues.
 Turn sea ice back on. Isabella from MO said they had similar issues in the beginning with this error which in our case was found to be related with vectorisation.
-Adding the following to the FCFLAGS:
+They suggest adding the following to the FCFLAGS in arch:
 -hvector0 -Ovector0
+but this seems to be a cray thing not a mpich and compilation fails because it doesn't recognise the -Ovector0 bit.
 
+Still getting abort files with -hvector0.
 
+James made a working nemo v5 NAARC configuration with some of the MY_SRC.
+Apparetly adding -O2 back in compile CPP s fine.
+Take a few lateral boundary conditions bits out of the namelist.
+DIA MY_SRC files are for diagnostics and could be added in probably without too much trouble.
+Apparently some MY_SRC files don't have any differences.
 
