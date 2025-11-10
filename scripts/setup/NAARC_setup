@@ -126,13 +126,13 @@ case "${NEMO_VER}"
     4.2)
            git clone --filter=blob:none --no-checkout --depth 1 --sparse --branch branch_4.2 https://forge.nemo-ocean.eu/nemo/nemo.git nemo
            cd nemo
-           git sparse-checkout add /makenemo /mk /src /cfgs/SHARED /cfgs/ref_cfgs.txt /ext
+           git sparse-checkout add makenemo mk src cfgs/SHARED cfgs/ref_cfgs.txt ext
            git checkout
            ;;
   4.2.2|4.2.3|5.*)
            git clone --filter=blob:none --no-checkout --depth 1 --sparse --branch $NEMO_VER https://forge.nemo-ocean.eu/nemo/nemo.git nemo
            cd nemo
-           git sparse-checkout add /makenemo /mk /src /cfgs/SHARED /cfgs/ref_cfgs.txt /ext
+           git sparse-checkout add makenemo mk src cfgs/SHARED cfgs/ref_cfgs.txt ext
 	   git checkout
            ;;
 esac
