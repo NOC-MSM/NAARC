@@ -58,6 +58,8 @@ I am still yet to optimise the mpp layout. You can have a play by changing the f
 
 `SRUN_CMD='mpiexec.hydra -print-rank-map -ppn 1 -np 140 ./xios_server.exe : -np 1326 ./nemo'`
 
+NB: at the moment the MES out-of-the-box case will run for 1d with no output. You will have to go into the `file_def*`
+and switch the 1m/1mo to 1d and also `type="one_file"` to `type="mulitple_file"`.
 
 ### Forcing data:
 
