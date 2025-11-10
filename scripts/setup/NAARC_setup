@@ -297,6 +297,7 @@ case "${HPC_TARG}"
   in
   archer2) sed -i "s?XXX_ENV_XXX?$REPO_DIR/scripts/env/archer2/${COMPILER}-${MPI_TARG}-ucx?" runscript.slurm
            sed -i "s?XXX_ENV_XXX?$REPO_DIR/scripts/env/archer2/${COMPILER}-${MPI_TARG}-ucx?" runzip.slurm
+           sed -i "s?XXX_ENV_XXX?$REPO_DIR/scripts/env/archer2/${COMPILER}-${MPI_TARG}-ucx?" run_rebuild_zip.slurm
            ;;
   anemone) sed -i "s?XXX_ENV_XXX?$REPO_DIR/scripts/env/anemone/${COMPILER}-${MPI_TARG}?" runscript.slurm
            sed -i "s?XXX_ENV_XXX?$REPO_DIR/scripts/env/anemone/${COMPILER}-${MPI_TARG}?" runscript_MES_MO.slurm
