@@ -361,8 +361,9 @@ but this seems to be a cray thing not a mpich and compilation fails because it d
 Still getting abort files with -hvector0.
 
 James made a working nemo v5 NAARC configuration with some of the MY_SRC.
-Apparetly adding -O2 back in compile CPP s fine.
+Apparetly adding -O2 back in compile arch fine.
 Take a few lateral boundary conditions bits out of the namelist.
 DIA MY_SRC files are for diagnostics and could be added in probably without too much trouble.
 Apparently some MY_SRC files don't have any differences.
+
 
