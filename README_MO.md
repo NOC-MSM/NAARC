@@ -57,6 +57,8 @@ ln_tide='.false.'
 ln_cdmin2d='.false.'
 ln_loglayer='.false.'
 sed -i "s/rn_boost =  2./rn_boost =  50./" namelist_cfg_template
+rm bfr_coef.nc; ln -s INPUTS/bfr_coef_zps.nc bfr_coef.nc
+rm shlat2d.nc; ln -s INPUTS/shlat2d_zps.nc shlat2d.nc
 ```
 I am still yet to optimise the mpp layout. You can have a play by changing the following in the runscript:
 
