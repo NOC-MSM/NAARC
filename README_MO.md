@@ -22,6 +22,10 @@ Before submitting a job, ammend the namelist:
 sed -i "s/sn_uoatm   =  'uos',/sn_voatm   =  'NOT USED',/" namelist_cfg_template
 sed -i "s/sn_voatm   =  'vos',/sn_voatm   =  'NOT USED',/" namelist_cfg_template
 ```
+To turn the transport diagnostics on issue the following:
+```
+sed -i "s/ln_diadct  =.false./ln_diadct  =.true./" namelist_cfg_template
+```
 Submit a test job:
 ```
 sbatch runscript_MES_MO.slurm -y 1979 -s 1
