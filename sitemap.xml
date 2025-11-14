@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://noc-msm.github.io/NAARC/</loc>
+         <lastmod>2025-11-14</lastmod>
+    </url>
+    <url>
+         <loc>https://noc-msm.github.io/NAARC/analysis/</loc>
+         <lastmod>2025-11-14</lastmod>
+    </url>
+    <url>
+         <loc>https://noc-msm.github.io/NAARC/deep_dives/</loc>
+         <lastmod>2025-11-14</lastmod>
+    </url>
+    <url>
+         <loc>https://noc-msm.github.io/NAARC/outputs/</loc>
+         <lastmod>2025-11-14</lastmod>
+    </url>
+    <url>
+         <loc>https://noc-msm.github.io/NAARC/validation/</loc>
+         <lastmod>2025-11-14</lastmod>
+    </url>
+</urlset>
