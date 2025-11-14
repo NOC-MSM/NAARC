@@ -4,20 +4,33 @@
 #SBATCH --account=n01-CLASS
 #SBATCH --partition=serial
 #SBATCH --qos=serial
-#SBATCH --mem=24G
+#SBATCH --mem=124G
 
-. XXX_ENV_XXX
+. /work/n01/n01/jdha/cfgs/NAARC/scripts/env/archer2/gnu-mpich-ucx
 
-cd OUTPUTS
+set -euo pipefail
 
-for fname in NAARC_1h_*_0000.nc NAARC_1d_*_0000.nc NAARC_5d_*_0000.nc NAARC_1m_*_0000.nc
-do
+cd OUTPUTS || exit 1
 
-/work/n01/n01/jdha/working_mes/nemo_main/tools/REBUILD_NEMO/rebuild_nemo -d 1 -x 256 -y 256 -z 75 -t 1 -p 12 ${fname/_0000.nc/} 16
+roots=($(ls *_0000.nc | sed 's/_0000\.nc$//' | sort -u))
 
-mv ${fname/_0000.nc/}.nc ../OUTPUTS_ZIP/
-mv ${fname/_0000.nc/}_????.nc ../OUTPUTS_PROCESSED/
+for fname in "${roots[@]}"; do
+    echo "Processing ${fname}.nc"
+    date
 
-echo "processed ${fname/_0000.nc/}.nc"
+    log_file="rebuild_${fname}.log"
+    rebuild_cmd="/work/n01/n01/jdha/working_mes/nemo_main/tools/REBUILD_NEMO/rebuild_nemo"
 
+    if $rebuild_cmd -d 1 -x 256 -y 256 -z 75 -t 1 -p 24 "$fname" 96 > "$log_file" 2>&1; then
+        echo "✅ Rebuild completed successfully for ${fname}.nc"
+        mv ${fname}.nc ../OUTPUTS_ZIP/
+        mv ${fname}_????.nc ../OUTPUTS_PROCESSED/
+        echo "Moved files for ${fname}.nc"
+    else
+        echo "❌ Rebuild failed for ${fname}.nc — check ${log_file}"
+    fi
+
+    date
+    echo "----------------------------------------"
 done
+
