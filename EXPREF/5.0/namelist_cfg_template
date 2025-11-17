@@ -310,10 +310,10 @@
 !-----------------------------------------------------------------------
    !                       !  free slip  !   partial slip  !   no slip   ! strong slip
    rn_shlat    =  0.   !  shlat = 0  !  0 < shlat < 2  !  shlat = 2  !  2 < shlat
-   ln_shlat2d=XXX_SHA_XXX,
+!   ln_shlat2d=XXX_SHA_XXX,
    ln_vorlat=.false.,
-   cn_shlat2d_file='./INPUTS/shlat2d.nc',
-   cn_shlat2d_var='shlat2d',
+!   cn_shlat2d_file='./INPUTS/shlat2d.nc',
+!   cn_shlat2d_var='shlat2d',
 /
 !-----------------------------------------------------------------------
 &nam_tide      !   tide parameters                                      (default: OFF)
