@@ -11,7 +11,7 @@
     
  <file_definition type="one_file" name="@expname@_@freq@_@startdate@_@enddate@" sync_freq="1mo" min_digits="4">
    
-   <file_group id="1m" output_freq="1mo"  output_level="10" enabled=".TRUE.">  <!-- 1m files -->   	
+   <file_group id="1m" output_freq="1mo"  output_level="10" enabled=".FALSE.">  <!-- 1m files -->   	
      <file id="file21" name_suffix="_icemod" description="ice variables" >
 
        <!-- ice mask -->
