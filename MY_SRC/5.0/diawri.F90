@@ -47,7 +47,7 @@ MODULE diawri
    USE zdfdrg         ! ocean vertical physics: top/bottom friction
    USE zdfmxl         ! mixed layer
    USE zdfosm         ! mixed layer
-!   USE zdftke  , ONLY: htau
+   USE zdftke  , ONLY: htau
    !
    USE lbclnk         ! ocean lateral boundary conditions (or mpp link)
    USE in_out_manager ! I/O manager
@@ -291,7 +291,7 @@ CONTAINS
       CALL iom_put( "avt" , avt )        ! T vert. eddy diff. coef.
       CALL iom_put( "avs" , avs )        ! S vert. eddy diff. coef.
       CALL iom_put( "avm" , avm )        ! T vert. eddy visc. coef.
-      !CALL iom_put( "htau" , htau )                ! htau scaling
+      CALL iom_put( "htau" , htau )                ! htau scaling
 
       IF( iom_use('logavt') )   CALL iom_put( "logavt", LOG( MAX( 1.e-20_wp, avt(:,:,:) ) ) )
       IF( iom_use('logavs') )   CALL iom_put( "logavs", LOG( MAX( 1.e-20_wp, avs(:,:,:) ) ) )
@@ -456,13 +456,13 @@ CONTAINS
 
       ENDIF
 
-      !IF( (.NOT.l_ldfeiv_time) .AND. ( iom_use('RossRad')  .OR. iom_use('RossRadlim') &
-      !      &                     .OR. iom_use('Tclinic_recip') .OR. iom_use('RR_GS')      &
-      !      &                     .OR. iom_use('aeiu_2d')  .OR. iom_use('aeiv_2d') ) ) THEN
-      !   CALL ldf_eiv(kt, 75.0, z2d, z3d(:,:,1),Kmm)
-      !   CALL iom_put('aeiu_2d', z2d)
-      !   CALL iom_put('aeiv_2d', z3d(:,:,1))
-      !ENDIF
+      IF( (.NOT.l_ldfeiv_time) .AND. ( iom_use('RossRad')  .OR. iom_use('RossRadlim') &
+            &                     .OR. iom_use('Tclinic_recip') .OR. iom_use('RR_GS')      &
+            &                     .OR. iom_use('aeiu_2d')  .OR. iom_use('aeiv_2d') ) ) THEN
+         CALL ldf_eiv(kt, 75.0, z2d, z3d(:,:,1),Kmm)
+         CALL iom_put('aeiu_2d', z2d)
+         CALL iom_put('aeiv_2d', z3d(:,:,1))
+      ENDIF
 
       IF( iom_use("tosmint") ) THEN
          z2d(:,:) = 0._wp
