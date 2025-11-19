@@ -366,4 +366,76 @@ Take a few lateral boundary conditions bits out of the namelist.
 DIA MY_SRC files are for diagnostics and could be added in probably without too much trouble.
 Apparently some MY_SRC files don't have any differences.
 
+-------------------------------------------------------
+WORKING NEMOv5 with domain.F90, dtatsd.F90, fldread.F90, in_out_manager.F90, iom.F90, istate.F90, restart.F90, traqsr.F90, zdftke.F90
+
+Adding diaX.F90 files back in and running causes error:
+
+===>>> : E R R O R
+ 
+          ===========
+
+ misspelled variable in namelist namlbc (cfg) iostat =  5010
+
+dommsk.F90 runs in the MY_SRC
+
+Tried adding ldftra.F90 but error in slurm-X.out:
+slurmstepd: error: Detected 1 oom-kill event(s) in StepId=11503589.0+0. Some of 
+your processes may have been killed by the cgroup out-of-memory handler.
+srun: error: nid003122: task 1275: Out Of Memory
+
+mv: mv: cannot stat '*_??_*icemod*.nc'cannot stat '*_??_*grid*.nc': No such file or directory
+
+Try adding the Iso-neut. diffusion trdmxl.F90, trdmxl_rst.F90, trdtra.F90
+These files have the same issue.
+
+Try adding the SST related files.
+These files caused an error in ocean.output:
+
+E R R O R
+
+          ===========
+
+   stp_ctl: |ssh| > 20 m  or  |U| > 10 m/s  or  S <= 0  or  S >= 100  or  NaN encounter in the tests
+
+
+Try adding diahth.F90. Error in slurm:
+
+slurmstepd: error: Detected 1 oom-kill event(s) in StepId=11523537.0+0. Some of 
+your processes may have been killed by the cgroup out-of-memory handler.
+srun: error: nid003659: task 1275: Out Of Memory
+
+mv: cannot stat '*_??_*grid*.nc': No such file or directory
+mv: cannot stat '*_??_*icemod*.nc': No such file or directory
+mv: cannot stat 'volume_transport': No such file or directory
+mv: cannot stat 'heat_transport': No such file or directory
+mv: cannot stat 'salt_transport': No such file or directory
+
+Try adding diadct.F90. same error as above.
+Try Pot Energy Anom files diapea.F90, diawri.F90, nemogcm.F90
+Same error as above and for traqsr.F90
+Same error as above and for traldf_triad.F90
+
+Oliver L. mentioned taking care with any calculations in NEMOv5 using halo bounds and to do things the way NEMOv5 does it. This could be the issue with traldf_triad.F90. This is using halo points and I've tied to add in some MY_SRC lines that do things with halo points but some of these lines are alsready included in the NEMOv5 traldf_triad.F90... scrap that idea for traldf_triad.F90
+
+I've been going back over the dommsk and Iso-neut. diffusion files and they also give the slurm error. I think I must have run v4 whne I thought I had v5 working.
+
+Turning output off in iodef.xml (<context id="nemo"> <output active="false"/> </context>) gets past the slurm out of memory issue.
+
+The Out of Memory error is fixed by diabling ice output in file_def_nemo-ice.xml.
+
+The Iso-neut. diffusion, dommsk.F90 and traldf_triad.F90 files work now I've fixed the out of memory issue.
+
+Try adding Potential Energy Anomaly parts of code back in.
+PEA files worked.
+Adding other diagnostics files worked.
+
+Adding sbc_oce.F90 sbcrnf.F90 sbcssm.F90 caused an error like before:
+  ===>>> : E R R O R
+
+          ===========
+
+   stp_ctl: |ssh| > 20 m  or  |U| > 10 m/s  or  S <= 0  or  S >= 100  or  NaN en
+counter in the tests
+
 
