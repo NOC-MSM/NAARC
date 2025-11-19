@@ -135,8 +135,6 @@ CONTAINS
             ttype='seos' ; stype='seos' ! seos using Simplified Equation of state
          ENDIF
       ENDIF
-
-      IF( ln_timing )   CALL timing_start('dia_wri')
       !
       IF( .NOT. l_istiled .OR. ntile == 1 )  THEN   ! Do only for the first tile
          ! Output the initial state and forcings
