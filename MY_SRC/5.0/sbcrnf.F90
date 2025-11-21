@@ -147,7 +147,7 @@ CONTAINS
             !CEOD River is fresh water so must at least be 0 unless we consider ice
             !rnf_tsc(:,:,jp_tem) = MAX( sst_m(A2D(0)), 0.0_wp ) * rnf(A2D(0)) * r1_rho0
             ! SLWA sst_m is potential temperature - use conservative temperature instead
-            rnf_tsc(:,:,jp_tem) = MAX( sst_m_con(:,:), 0.0_wp ) * rnf(:,:) * r1_rho0 ! SLWA
+            rnf_tsc(:,:,jp_tem) = MAX( sst_m_con(A2D(0)), 0.0_wp ) * rnf(A2D(0)) * r1_rho0
          ENDIF
          !                                                           ! use runoffs salinity data
          IF( ln_rnf_sal )   rnf_tsc(:,:,jp_sal) = ( sf_s_rnf(1)%fnow(:,:,1) ) * rnf(A2D(0)) * r1_rho0
