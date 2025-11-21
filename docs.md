@@ -438,4 +438,22 @@ Adding sbc_oce.F90 sbcrnf.F90 sbcssm.F90 caused an error like before:
    stp_ctl: |ssh| > 20 m  or  |U| > 10 m/s  or  S <= 0  or  S >= 100  or  NaN en
 counter in the tests
 
+With diawri.F90 changes in there was this slurm error instead and it ran 1 timestep instead of 2.
 
+application called MPI_Abort(MPI_COMM_WORLD, 123) - process 337
+ STOP from timing: try to stop stp_MLF but we point toward dia_wri, MPI rank: 79
+MPICH ERROR [Rank 646] [job id 11598402.0] [Wed Nov 19 10:12:21 2025] [nid001714] - Abort(123) (rank 646 in comm 0): application called MPI_Abort(MPI_COMM_WORLD, 123) - process 646
+
+Without diawri.F90 and sbcssm.F90 the ocean.output error occurs.
+There was an extra CALL timing_start('dia_wri') in diawri.F90 that didn't need to be there.
+
+Can't see anything obviously wrong in sbcrnf.F90 or sbc_oce.F90
+
+Running with sbc_oce.F90 alone is fine.
+Running with sbc_oce.F90 and a modified sbcrnf.F90 to specify sst_m_con = sst_m produces a different ocean.output error only on some instances "NaN found in sst_m_con" -> this is the message I put in the modified sbcrnf.F90.
+Removing the message gets one timestep further gives the same error as before.
+
+Commeting out the sst_m_con accumulation and average in sbcssm.F90 still gives the same error.
+
+Trying sbcrnf with rnf_tsc(:,:,jp_tem) = MAX( sst_m_con(A2D(0)), 0.0_wp ) * rnf(A2D(0)) * r1_rho0
+This has worked!
