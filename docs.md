@@ -457,3 +457,6 @@ Commeting out the sst_m_con accumulation and average in sbcssm.F90 still gives t
 
 Trying sbcrnf with rnf_tsc(:,:,jp_tem) = MAX( sst_m_con(A2D(0)), 0.0_wp ) * rnf(A2D(0)) * r1_rho0
 This has worked!
+All done.
+
+
