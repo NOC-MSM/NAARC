@@ -163,14 +163,30 @@ export DOWNLOAD_DIR="$WORK_DIR/nemo/cfgs/NAARC/EXPREF/"
 
 echo "Checking out xios repository"
 
-#XIOS3/branches/xios-3.0-beta
-case "${NEMO_VER}"
+case "${XIOS_VER}"
   in
-  4.2|4.2.?|5.*) svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk@2379 xios
+  2|3)
+           echo "XIOS Version $XIOS_VER will be checked out"
+           ;;
+  *)       echo "XIOS Version not recognised"
+           echo "Versions available: 2, 3"
+           exit 1
+esac
+
+
+if [[ "$NEMO_VER" == 5.* && "$XIOS_VER" == 3 ]]; then
+    svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS3/branches/xios-3.0-beta xios
+    cd xios
+    cp $REPO_DIR/arch/xios/3/* ./arch
+    ;;
+else
+  case "${NEMO_VER}"
+    in
+    4.2|4.2.?|5.*) svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk@2379 xios
            cd xios
            cp $REPO_DIR/arch/xios/2/* ./arch
            ;;
-  4.0.?)   svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5@1964 xios
+    4.0.?)   svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5@1964 xios
            cd xios
            cp $REPO_DIR/arch/xios/2.5/* ./arch
            ;;
