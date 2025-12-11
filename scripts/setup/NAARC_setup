@@ -178,7 +178,6 @@ if [[ "$NEMO_VER" == 5.* && "$XIOS_VER" == 3 ]]; then
     svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS3/branches/xios-3.0-beta xios
     cd xios
     cp $REPO_DIR/arch/xios/3/* ./arch
-    ;;
 else
   case "${NEMO_VER}"
     in
@@ -192,7 +191,8 @@ else
            ;;
   *)       echo "Nemo v < 4 is not supported by XIOS 2.5"
            exit 1
-esac
+  esac
+fi
 
 echo "Compiling xios"
 ./make_xios --full --prod --arch ${HPC_TARG}-${COMPILER}-${MPI_TARG} --netcdf_lib netcdf4_par --job 10
@@ -238,7 +238,11 @@ else
   esac
 fi
 
-cp -r $REPO_DIR/EXPREF/$NEMO_VER/ EXPREF
+if [[ "$NEMO_VER" == 5.* && "$XIOS_VER" == 3 ]]; then
+  cp -r $REPO_DIR/EXPREF/${NEMO_VER}_x${XIOS_VER}/ EXPREF
+else
+  cp -r $REPO_DIR/EXPREF/$NEMO_VER/ EXPREF
+fi
 cd $CONFIG_DIR/EXPREF
 
 mkdir meta_out
