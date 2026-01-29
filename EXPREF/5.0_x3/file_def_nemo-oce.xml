@@ -10,19 +10,19 @@
    
     <file_definition type="one_file" compression_level="1" name="@expname@_@freq@_@startdate@_@enddate@" sync_freq="1mo" min_digits="4">
     
-      <file_group id="1ts" output_freq="1ts"  output_level="10" enabled=".FALSE."/> <!-- 1 time step files -->
+      <file_group id="1ts" compression_level="1" output_freq="1ts"  output_level="10" enabled=".FALSE."/> <!-- 1 time step files -->
 
-      <file_group id="1h" output_freq="1h"  output_level="10" enabled=".FALSE."/> <!-- 1h files -->
+      <file_group id="1h" compression_level="1" output_freq="1h"  output_level="10" enabled=".FALSE."/> <!-- 1h files -->
 
-      <file_group id="2h" output_freq="2h"  output_level="10" enabled=".FALSE."/> <!-- 2h files -->
+      <file_group id="2h" compression_level="1" output_freq="2h"  output_level="10" enabled=".FALSE."/> <!-- 2h files -->
 
-      <file_group id="3h" output_freq="3h"  output_level="10" enabled=".FALSE."/> <!-- 3h files -->     
+      <file_group id="3h" compression_level="1" output_freq="3h"  output_level="10" enabled=".FALSE."/> <!-- 3h files -->     
 
-      <file_group id="4h" output_freq="4h"  output_level="10" enabled=".FALSE."/> <!-- 4h files -->
+      <file_group id="4h" compression_level="1" output_freq="4h"  output_level="10" enabled=".FALSE."/> <!-- 4h files -->
 
-      <file_group id="6h" output_freq="6h"  output_level="10" enabled=".FALSE."/> <!-- 6h files -->     
+      <file_group id="6h" compression_level="1" output_freq="6h"  output_level="10" enabled=".FALSE."/> <!-- 6h files -->     
 
-      <file_group id="5d" output_freq="5d"  output_level="10" enabled=".FALSE.">  <!-- 5d files -->
+      <file_group id="5d" compression_level="1" output_freq="5d"  output_level="10" enabled=".FALSE.">  <!-- 5d files -->
 
         <file id="file99" name_suffix="_grid_T" mode="write" gatherer="tgatherer" writer="twriter" using_server2="true" description="global means" enabled=".true.">
           <field field_ref="sshtot"       name="sshtot"     />
@@ -66,7 +66,7 @@
       </file_group>
 
 
-      <file_group id="1m" output_freq="1mo" output_level="10" split_freq="1mo" enabled=".FALSE."> <!-- real monthly files -->
+      <file_group id="1m" compression_level="1" output_freq="1mo" output_level="10" split_freq="1mo" enabled=".FALSE."> <!-- real monthly files -->
 
         <file id="file8" name_suffix="_grid_T" mode="write" gatherer="tgatherer" writer="twriter" using_server2="true" enabled=".true." >
 	  <field field_ref="e3t"          name="thkcello"  />
@@ -141,13 +141,13 @@
 
       </file_group>
 
-      <file_group id="2m" output_freq="2mo" output_level="10" enabled=".FALSE."/> <!-- real 2m files -->
-      <file_group id="3m" output_freq="3mo" output_level="10" enabled=".FALSE."/> <!-- real 3m files -->
-      <file_group id="4m" output_freq="4mo" output_level="10" enabled=".FALSE."/> <!-- real 4m files -->
-      <file_group id="6m" output_freq="6mo" output_level="10" enabled=".FALSE."/> <!-- real 6m files -->
+      <file_group id="2m" compression_level="1" output_freq="2mo" output_level="10" enabled=".FALSE."/> <!-- real 2m files -->
+      <file_group id="3m" compression_level="1" output_freq="3mo" output_level="10" enabled=".FALSE."/> <!-- real 3m files -->
+      <file_group id="4m" compression_level="1" output_freq="4mo" output_level="10" enabled=".FALSE."/> <!-- real 4m files -->
+      <file_group id="6m" compression_level="1" output_freq="6mo" output_level="10" enabled=".FALSE."/> <!-- real 6m files -->
 
 
-      <file_group id="1y"  output_freq="1y" output_level="10" enabled=".FALSE."> <!-- real 1y files -->
+      <file_group id="1y" compression_level="1" output_freq="1y" output_level="10" enabled=".FALSE."> <!-- real 1y files -->
         <file id="file128" mode="write" gatherer="tgatherer" writer="twriter" using_server2="true" name_suffix="_grid_T" enabled=".true." >
           <field field_ref="e3t"          name="thkcello"  />
           <field field_ref="ssh"          name="zos"       />
@@ -220,12 +220,12 @@
 
       </file_group>
 
-      <file_group id="2y"  output_freq="2y" output_level="10" enabled=".FALSE."/> <!-- real 2y files -->
-      <file_group id="5y"  output_freq="5y" output_level="10" enabled=".FALSE."/> <!-- real 5y files -->
-      <file_group id="10y" output_freq="10y" output_level="10" enabled=".FALSE."/> <!-- real 10y files -->
+      <file_group id="2y" compression_level="1"  output_freq="2y" output_level="10" enabled=".FALSE."/> <!-- real 2y files -->
+      <file_group id="5y" compression_level="1"  output_freq="5y" output_level="10" enabled=".FALSE."/> <!-- real 5y files -->
+      <file_group id="10y" compression_level="1" output_freq="10y" output_level="10" enabled=".FALSE."/> <!-- real 10y files -->
 
       <!-- Activation of intermediate output for multiple-linear-regression analysis (diamlr) -->
-      <file_group id="diamlr_files" output_freq="1h"  output_level="10" enabled=".FALSE."/>
+      <file_group id="diamlr_files" compression_level="1" output_freq="1h"  output_level="10" enabled=".FALSE."/>
 
    </file_definition>
     
