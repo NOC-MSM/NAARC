@@ -9,7 +9,7 @@
 
     <variable_definition>
       <variable_group id="buffer">
-        <variable id="min_buffer_size" type="int">400000</variable>
+        <variable id="min_buffer_size" type="int">4000000</variable>
         <variable id="optimal_buffer_size" type="string">performance</variable>
       </variable_group>
 
@@ -23,15 +23,13 @@
       </variable_group>
     </variable_definition>
     <pool_definition>
-     <pool name="Opool" nprocs="12">
-      <service name="tgatherer" nprocs="2" type="gatherer"/>
-      <service name="igatherer" nprocs="2" type="gatherer"/>
-      <service name="ugatherer" nprocs="2" type="gatherer"/>
-      <service name="pgatherer" nprocs="2" type="gatherer"/>
-      <service name="twriter" nprocs="1" type="writer"/>
-      <service name="uwriter" nprocs="1" type="writer"/>
-      <service name="iwriter" nprocs="1" type="writer"/>
-      <service name="pwriter" nprocs="1" type="writer"/>
+     <pool name="Opool" nprocs="58">
+      <service name="tgatherer" nprocs="24" type="gatherer"/>
+      <service name="igatherer" nprocs="8" type="gatherer"/>
+      <service name="ugatherer" nprocs="16" type="gatherer"/>
+      <service name="twriter" nprocs="4" type="writer"/>
+      <service name="uwriter" nprocs="4" type="writer"/>
+      <service name="iwriter" nprocs="2" type="writer"/>
      </pool>
     </pool_definition>
   </context>
