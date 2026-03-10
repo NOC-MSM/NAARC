@@ -1,0 +1,1 @@
+This directory contains setup files to run pybdy to make NAARC boundaries from GOSI10p3 data. The slurm and bash script are for running pybdy on JASMIN to allow for the high memory usage which is about 50Gb. 
