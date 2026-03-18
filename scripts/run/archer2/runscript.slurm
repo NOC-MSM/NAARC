@@ -359,7 +359,6 @@ do
    fi
 
    nextyear=`./check_runtime $SLURM_JOB_ID $YEAR $year`
-   exit
 
 done
 
