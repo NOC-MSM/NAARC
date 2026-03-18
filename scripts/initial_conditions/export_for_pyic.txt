@@ -1,0 +1,2 @@
+export UCX_TLS=tcp,self
+export OMPI_MCA_btl=^openib

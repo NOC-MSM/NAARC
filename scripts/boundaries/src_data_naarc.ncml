@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<netcdf
+  title="aggregation example"
+  xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2"
+>
+  <aggregation type="union">
+
+    <!-- T -->
+    <netcdf>
+      <aggregation type="joinExisting" dimName="time_counter">
+        <netcdf location="./gosi10p3/nemo_dm257o_1m_19790101-19790201_grid-T.nc" />
+        <netcdf location="./gosi10p3/nemo_dm257o_1m_19790201-19790301_grid-T.nc" />
+      </aggregation>
+
+      <!-- Rename existing variables using orgName -->
+      <variable name="votemper" orgName="thetao_con" />
+      <variable name="vosaline" orgName="so_abs" />
+      <variable name="sossheig" orgName="zos" />
+
+    </netcdf>
+
+    <!-- U -->
+    <netcdf>
+      <aggregation type="joinExisting" dimName="time_counter">
+        <netcdf location="./gosi10p3/nemo_dm257o_1m_19790101-19790201_grid-U.nc" />
+        <netcdf location="./gosi10p3/nemo_dm257o_1m_19790201-19790301_grid-U.nc" />
+      </aggregation>
+
+      <!-- Rename existing variables using orgName -->
+      <variable name="vozocrtx" orgName="uo" />
+
+    </netcdf>
+
+    <!-- V -->
+    <netcdf>
+      <aggregation type="joinExisting" dimName="time_counter">
+        <netcdf location="./gosi10p3/nemo_dm257o_1m_19790101-19790201_grid-V.nc" />
+        <netcdf location="./gosi10p3/nemo_dm257o_1m_19790201-19790301_grid-V.nc" />
+      </aggregation>
+
+      <!-- Rename existing variables using orgName -->
+      <variable name="vomecrty" orgName="vo" />
+
+    </netcdf>
+  </aggregation>
+</netcdf>
