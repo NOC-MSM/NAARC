@@ -2,8 +2,8 @@
 <!-- $id$ -->
 
 <field_definition level="1" prec="4" operation="average" enabled=".TRUE." default_value="1.e20" > <!-- time step automaticaly defined -->
+<field_group id="all_ocean" chunking_blocksize_target="20.0">
 
- <field_group id="all_ocean" compression_level="1" chunking_blocksize_target="20.0">
   <!--
       =====================================================================================================
       =                                   Configurable diagnostics                                        =
@@ -1728,5 +1728,6 @@ that are available in the tidal-forcing implementation (see
     <field field_ref="temptot"             name="sctemtot"     />
   </field_group>
 
-  
+
+</field_group>   <!-- close all_ocean group -->  
 </field_definition>
