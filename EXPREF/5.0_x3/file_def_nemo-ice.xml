@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+    <!-- $id$ -->
+    
+ <!--
+============================================================================================================
+=                                           output files definition                                        =
+=                                      Define your own files for sea ice                                   =
+=                                         put the variables you want...                                    =
+============================================================================================================
+ -->
+    
+ <file_definition type="one_file" compression_level="1" name="OUTPUTS/@expname@_@freq@_@startdate@_@enddate@" sync_freq="1d" min_digits="4">
+   
+   <file_group id="1m" compression_level="1" output_freq="1mo"  output_level="10" enabled=".true." >
+
+     <file id="file21" compression_level="1" name_suffix="_icemod" mode="write" gatherer="igatherer" writer="iwriter" using_server2="true" description="ice variables" enabled=".true." >
+
+       <!-- general -->
+       <field field_ref="snwvolu"          name="snvolu" />
+       <field field_ref="icethic"          name="sithic" />
+       <field field_ref="icevolu"          name="sivolu" />
+       <field field_ref="iceconc"          name="siconc" />
+       <field field_ref="icesalt"          name="sisali" />
+       <field field_ref="iceapnd"          name="siapnd" />
+       <field field_ref="icevpnd"          name="sivpnd" />
+
+     </file>
+     
+   </file_group>
+   
+ </file_definition>
+ 

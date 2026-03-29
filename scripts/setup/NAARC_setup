@@ -163,20 +163,36 @@ export DOWNLOAD_DIR="$WORK_DIR/nemo/cfgs/NAARC/EXPREF/"
 
 echo "Checking out xios repository"
 
-#XIOS3/branches/xios-3.0-beta
-case "${NEMO_VER}"
+case "${XIOS_VER}"
   in
-  4.2|4.2.?|5.*) svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk@2379 xios
+  2|3)
+           echo "XIOS Version $XIOS_VER will be checked out"
+           ;;
+  *)       echo "XIOS Version not recognised"
+           echo "Versions available: 2, 3"
+           exit 1
+esac
+
+
+if [[ "$NEMO_VER" == 5.* && "$XIOS_VER" == 3 ]]; then
+    svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS3/trunk@2904 xios
+    cd xios
+    cp $REPO_DIR/arch/xios/3/* ./arch
+else
+  case "${NEMO_VER}"
+    in
+    4.2|4.2.?|5.*) svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk@2379 xios
            cd xios
            cp $REPO_DIR/arch/xios/2/* ./arch
            ;;
-  4.0.?)   svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5@1964 xios
+    4.0.?)   svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5@1964 xios
            cd xios
            cp $REPO_DIR/arch/xios/2.5/* ./arch
            ;;
   *)       echo "Nemo v < 4 is not supported by XIOS 2.5"
            exit 1
-esac
+  esac
+fi
 
 echo "Compiling xios"
 ./make_xios --full --prod --arch ${HPC_TARG}-${COMPILER}-${MPI_TARG} --netcdf_lib netcdf4_par --job 10
@@ -222,7 +238,11 @@ else
   esac
 fi
 
-cp -r $REPO_DIR/EXPREF/$NEMO_VER/ EXPREF
+if [[ "$NEMO_VER" == 5.* && "$XIOS_VER" == 3 ]]; then
+  cp -r $REPO_DIR/EXPREF/${NEMO_VER}_x${XIOS_VER}/ EXPREF
+else
+  cp -r $REPO_DIR/EXPREF/$NEMO_VER/ EXPREF
+fi
 cd $CONFIG_DIR/EXPREF
 
 mkdir meta_out
@@ -256,8 +276,12 @@ esac
 cp -r $REPO_DIR/scripts/run/$HPC_TARG/* $CONFIG_DIR/EXPREF
 find $REPO_DIR/scripts/run -maxdepth 1 -type f -execdir cp "{}" $CONFIG_DIR/EXPREF ";"
 
-cp $REPO_DIR/CPP/$NEMO_VER/cpp_NAARC.fcm $CONFIG_DIR/
- 
+if [[ "$NEMO_VER" == 5.* && "$XIOS_VER" == 3 ]]; then
+  cp $REPO_DIR/CPP/${NEMO_VER}_x${XIOS_VER}/cpp_NAARC.fcm $CONFIG_DIR/
+else
+  cp $REPO_DIR/CPP/$NEMO_VER/cpp_NAARC.fcm $CONFIG_DIR/
+fi
+
 # copy CPOM changes for form drag into MY_SRC if 4.2.2
 
 # *********** Commenting out the following as code now in MY_SRC **************

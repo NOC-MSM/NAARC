@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Do we have time to run another year?
+#
+# $1 SLURM_ID
+# $2 Start Year
+# $3 Current Year
+
+# Time left in the machine and time used
+tl=`squeue -j $1 --noheader --Format=TimeLeft`
+tu=`squeue -j $1 --noheader --Format=TimeUsed`
+
+# Reverse syntax as dd and hh not always displayed if == 00
+tl_r=`echo $tl | awk -F'[:-]' '{for(i=NF;i>0;i--)printf "%s:",$i;print ""}'`
+tu_r=`echo $tu | awk -F'[:-]' '{for(i=NF;i>0;i--)printf "%s:",$i;print ""}'`
+
+# Convert to seconds
+sl=`echo $tl_r | awk -F: '{ print $1 + ($2 * 60) + ($3 * 3600) + ($4 * 86400)}'`
+su=`echo $tu_r | awk -F: '{ print $1 + ($2 * 60) + ($3 * 3600) + ($4 * 86400)}'`
+
+# Work out average time to run 1 year
+yrs=$(( $3-$2 + 1 ))
+spy=$(( $su/$yrs ))
+
+# Add 5% tollerance 
+spy=$(( $spy*105/100 ))
+
+# Do we have enough time?
+if [ $sl -ge $spy ]
+then
+	echo true
+else
+	echo false
+fi
