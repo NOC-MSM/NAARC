@@ -20,7 +20,6 @@
         <variable id="using_server2" type="bool">false</variable>
         <variable id="transport_protocol" type="string" >p2p</variable>
 	<variable id="using_oasis"      type="bool">false</variable>
-	<variable id="log_memory" type="bool">true</variable>
       </variable_group>
     </variable_definition>
     <pool_definition>
