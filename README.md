@@ -11,7 +11,7 @@ The setup script has been tested and will checkout, compile and run the NAARC (N
 On ARCHER2
 ```
 git clone git@github.com:NOC-MSM/NAARC.git
-./NAARC/scripts/setup/NAARC_setup -p $PWD/NAARC_RUNS  -r $PWD/NAARC -n 5.0 -x 2 -m archer2 -a mpich -c gnu
+./NAARC/scripts/setup/NAARC_setup -p $PWD/NAARC_RUNS -r $PWD/NAARC -n 5.0 -x 3 -m archer2 -a mpich -c gnu
 cd NAARC_RUNS/nemo/cfgs/NAARC//
 cp -rP EXPREF EXP_MYRUN
 cd EXP_MYRUN
