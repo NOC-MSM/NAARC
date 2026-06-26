@@ -105,6 +105,13 @@ then
    elif [ $SLURM_NNODES -eq 72 ]
    then
       SRUN_CMD=`./slurm_setup -S 64 -s 16 -m 1 -C 8090 -g 9000 -N 128 -t 01:00:00 -a n01-CLASS -j se-nemo`
+   elif [ $SLURM_NNODES -eq 54 ]
+   then
+      SRUN_CMD=`./slurm_setup -S 94 -s 8 -m 2 -C 6131 -g 9000 -N 128 -t 01:00:00 -a n01-CLASS -j se-nemo`
+  elif [ $SLURM_NNODES -eq 70 ]
+   then
+      SRUN_CMD=`./slurm_setup -S 94 -s 8 -m 2 -C 8090 -g 9000 -N 128 -t 01:00:00 -a n01-CLASS -j se-nemo`
+
    else
       exit
    fi

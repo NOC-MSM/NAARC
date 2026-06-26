@@ -1,0 +1,90 @@
+!!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!! SI3 Reference namelist:
+!!              1 - Generic parameters                 (nampar)
+!!              2 - Ice thickness discretization       (namitd)
+!!              3 - Ice dynamics                       (namdyn)
+!!              4 - Ice ridging/rafting                (namdyn_rdgrft)
+!!              5 - Ice rheology                       (namdyn_rhg)
+!!              6 - Ice advection                      (namdyn_adv)
+!!              7 - Ice surface boundary conditions    (namsbc)
+!!              8 - Ice thermodynamics                 (namthd)
+!!              9 - Ice heat diffusion                 (namthd_zdf)
+!!             10 - Ice lateral melting                (namthd_da)
+!!             11 - Ice growth in open water           (namthd_do)
+!!             12 - Ice salinity                       (namthd_sal)
+!!             13 - Ice melt ponds                     (namthd_pnd)
+!!             14 - Ice initialization                 (namini)
+!!             15 - Ice/snow albedos                   (namalb)
+!!             16 - Ice diagnostics                    (namdia)
+!!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!
+!------------------------------------------------------------------------------
+&nampar         !   Generic parameters
+!------------------------------------------------------------------------------
+   jpl              =   5             !  number of ice  categories
+   nlay_i           =   4             !  number of ice  layers
+   nlay_s           =   1             !  number of snow layers
+   ln_virtual_itd   =.false.,       !  virtual ITD mono-category parameterization (jpl=1 only)
+                                      !     i.e. enhanced thermal conductivity & virtual thin ice melting
+   ln_icedyn        =.true.,          !  ice dynamics (T) or not (F)
+   ln_icethd        =.true.,          !  ice thermo   (T) or not (F)
+   rn_amax_n        =   0.997         !  maximum tolerated ice concentration NH
+   rn_amax_s        =   0.997         !  maximum tolerated ice concentration SH
+   cn_icerst_in     = "XXX_RS0_XXX"   !  suffix of ice restart name (input)
+   cn_icerst_out    = "restart_ice"   !  suffix of ice restart name (output)
+   cn_icerst_indir  = "./RESTARTS"             !  directory to read   input ice restarts
+   cn_icerst_outdir = "./RESTARTS"             !  directory to write output ice restarts
+/
+!------------------------------------------------------------------------------
+&namdyn_rhg     !   Ice rheology
+!------------------------------------------------------------------------------
+   ln_rhg_EVP       =.true.,          !  EVP rheology
+   ln_rhg_EAP       =.false.,         !  EAP rheology
+      ln_aEVP       =.true.,          !     adaptive rheology (Kimmritz et al. 2016 & 2017)
+      rn_creepl     =   2.0e-9        !     creep limit [1/s]
+      rn_ecc        =   2.0           !     eccentricity of the elliptical yield curve
+      nn_nevp       = 120             !     number of EVP subcycles
+      rn_relast     =   0.333         !     ratio of elastic timescale to ice time step: Telast = dt_ice * rn_relast
+                                      !        advised value: 1/3 (nn_nevp=100) or 1/9 (nn_nevp=300)
+      nn_rhg_chkcvg =   0             !     check convergence of rheology
+                                      !     = 0  no check
+                                      !     = 1  check at the main time step (output xml: uice_cvg)
+                                      !     = 2  check at both main and rheology time steps (additional output: ice_cvg.nc)
+                                      !          this option 2 asks a lot of communications between cpu
+   ln_rhg_VP        =.false.,         !  VP rheology
+      nn_vp_nout    = 10              !     number of outer iterations
+      nn_vp_ninn    = 1500            !     number of inner iterations
+      nn_vp_chkcvg  = 5               !     iteration step for convergence check
+/
+
+!------------------------------------------------------------------------------
+&namsbc         !   Ice surface boundary conditions
+!------------------------------------------------------------------------------
+   rn_Cd_io           =   2.3e-03       ! JC ice-ocean drag coefficient (-) DEFAULT 1.0e-02 
+/
+!------------------------------------------------------------------------------
+&namini         !   Ice initialization
+!------------------------------------------------------------------------------
+   ln_iceini        =.true.,          !  activate ice initialization (T) or not (F)
+   nn_iceini_file   =   1             !     0 = Initialise sea ice based on SSTs
+                                      !     1 = Initialise sea ice from single category netcdf file
+                                      !     2 = Initialise sea ice from multi category restart file
+   ! -- for nn_iceini_file = 1
+   sn_hti = 'INPUTS/Ice_initialization'    , -1. ,'sithic'   ,  .false.  , .true., 'monthly'  , '' , '', ''
+   sn_hts = 'INPUTS/Ice_initialization'    , -1. ,'snthic'   ,  .false.  , .true., 'monthly'  , '' , '', ''
+   sn_ati = 'INPUTS/Ice_initialization'    , -1. ,'siconc'   ,  .false.  , .true., 'monthly'  , '' , '', ''
+   sn_smi = 'NOT USED'    , -12. ,'smi'   ,  .false.  , .true., 'yearly'  , '' , '', ''
+   sn_tmi = 'NOT USED'    , -12. ,'tmi'   ,  .false.  , .true., 'yearly'  , '' , '', ''
+   sn_tsu = 'NOT USED'    , -12. ,'tsu'   ,  .false.  , .true., 'yearly'  , '' , '', ''
+/
+!------------------------------------------------------------------------------
+&namalb         !   albedo parameters
+!------------------------------------------------------------------------------
+   !                                  !                          !  obs range (cloud-sky)
+   rn_alb_sdry      =   0.85          !  dry snow albedo         :  0.85 -- 0.87
+   rn_alb_smlt      =   0.75          !  melting snow albedo     :  0.72 -- 0.82
+   rn_alb_idry      =   0.64 !0.64          !  dry ice albedo          :  0.54 -- 0.65
+   rn_alb_imlt      =   0.53 !0.53          !  bare puddled ice albedo :  0.49 -- 0.58
+   rn_alb_dpnd      =   0.18 !0.18          !  dark pond albedo       :  0.12 -- 0.25
+   rn_alb_hpiv      =   0.06 !1.00          !  pivotal ice thickness in m (above which albedo is constant)
+/

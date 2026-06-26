@@ -119,11 +119,11 @@ esac
 
 case "${NEMO_VER}"
   in
-  4.2|4.2.2|4.2.3)
+  4.2|4.2.2|4.2.3|5.0|5.0.1)
            echo "NEMO Version $NEMO_VER will be checked out"
 	   ;;
   *)       echo "NEMO Version not recognised"
-           echo "Versions available: 4.2.2"
+           echo "Versions available: 4.2, 4.2.2, 4.2.3, 5.0"
            exit 1
 esac
 
@@ -143,7 +143,7 @@ case "${NEMO_VER}"
            esac
            git checkout
            ;;
-  4.2.2|4.2.3)
+  4.2.2|4.2.3|5.*)
            git clone --filter=blob:none --no-checkout --depth 1 --sparse --branch $NEMO_VER https://forge.nemo-ocean.eu/nemo/nemo.git nemo
            cd nemo
            case "${HPC_TARG}"
@@ -160,7 +160,7 @@ esac
 # Now check EXTERNALS revision number before checking out the rest
 case "${NEMO_VER}"
   in
-  4.2|4.2.?)
+  4.2|4.2.?|5.*)
       echo "Nothing to do as EXTERNALS are integral to $NEMO_VER"
       ;;
   *)
@@ -183,18 +183,36 @@ export DOWNLOAD_DIR="$WORK_DIR/nemo/cfgs/NAARC/EXPREF/"
 
 echo "Checking out xios repository"
 
-#XIOS3/branches/xios-3.0-beta
-case "${NEMO_VER}"
+case "${XIOS_VER}"
   in
-  4.2|4.2.?) svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk@2379 xios
+  2|3)
+           echo "XIOS Version $XIOS_VER will be checked out"
+           ;;
+  *)       echo "XIOS Version not recognised"
+           echo "Versions available: 2, 3"
+           exit 1
+esac
+
+
+if [[ "$NEMO_VER" == 5.* && "$XIOS_VER" == 3 ]]; then
+    svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS3/trunk@2904 xios
+    cd xios
+    cp $REPO_DIR/arch/xios/3/* ./arch
+else
+  case "${NEMO_VER}"
+    in
+    4.2|4.2.?|5.*) svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk@2379 xios
            cd xios
            cp $REPO_DIR/arch/xios/2/* ./arch
            ;;
-  *)       svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5@1964 xios
+    4.0.?)   svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5@1964 xios
            cd xios
            cp $REPO_DIR/arch/xios/2.5/* ./arch
            ;;
-esac
+  *)       echo "Nemo v < 4 is not supported by XIOS 2.5"
+           exit 1
+  esac
+fi
 
 echo "Compiling xios"
 ./make_xios --full --prod --arch ${HPC_TARG}-${COMPILER}-${MPI_TARG} --netcdf_lib netcdf4_par --job 10
@@ -240,7 +258,11 @@ else
   esac
 fi
 
-cp -r $REPO_DIR/EXPREF/$NEMO_VER/ EXPREF
+if [[ "$NEMO_VER" == 5.* && "$XIOS_VER" == 3 ]]; then
+  cp -r $REPO_DIR/EXPREF/${NEMO_VER}_x${XIOS_VER}/ EXPREF
+else
+  cp -r $REPO_DIR/EXPREF/$NEMO_VER/ EXPREF
+fi
 cd $CONFIG_DIR/EXPREF
 
 mkdir meta_out
@@ -274,8 +296,12 @@ esac
 cp -r $REPO_DIR/scripts/run/$HPC_TARG/* $CONFIG_DIR/EXPREF
 find $REPO_DIR/scripts/run -maxdepth 1 -type f -execdir cp "{}" $CONFIG_DIR/EXPREF ";"
 
-cp $REPO_DIR/CPP/$NEMO_VER/cpp_NAARC.fcm $CONFIG_DIR/
- 
+if [[ "$NEMO_VER" == 5.* && "$XIOS_VER" == 3 ]]; then
+  cp $REPO_DIR/CPP/${NEMO_VER}_x${XIOS_VER}/cpp_NAARC.fcm $CONFIG_DIR/
+else
+  cp $REPO_DIR/CPP/$NEMO_VER/cpp_NAARC.fcm $CONFIG_DIR/
+fi
+
 # copy CPOM changes for form drag into MY_SRC if 4.2.2
 
 # *********** Commenting out the following as code now in MY_SRC **************
@@ -325,7 +351,7 @@ done
 cd $WORK_DIR/nemo
 
 echo "Compiling nemo NAARC Config"
-./makenemo -m ${HPC_TARG}-${COMPILER}-${MPI_TARG} -r NAARC -j 16
+./makenemo -m ${HPC_TARG}-${COMPILER}-${MPI_TARG} -r NAARC -n NAARC -j 16
 
 echo
 echo "  Auto-Config: NAARC"
@@ -342,3 +368,4 @@ echo
 echo "  - submit via the sbatch command"
 
 echo
+

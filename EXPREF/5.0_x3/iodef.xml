@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<simulation> 
+
+<!-- ============================================================================================ -->
+<!-- XIOS3 context                                                                                 -->
+<!-- ============================================================================================ -->
+
+  <context id="xios" >
+
+    <variable_definition>
+      <variable_group id="buffer">
+        <variable id="min_buffer_size" type="int">24000000</variable>
+        <variable id="optimal_buffer_size" type="string">performance</variable>
+      </variable_group>
+
+      <variable_group id="parameters" >
+        <variable id="using_server" type="bool">true</variable>
+        <variable id="info_level" type="int">0</variable>
+        <variable id="print_file" type="bool">false</variable>
+        <variable id="using_server2" type="bool">false</variable>
+        <variable id="transport_protocol" type="string" >p2p</variable>
+	<variable id="using_oasis"      type="bool">false</variable>
+      </variable_group>
+    </variable_definition>
+    <pool_definition>
+     <pool name="Opool" nprocs="94">
+      <service name="tgatherer" nprocs="24" type="gatherer"/>
+      <service name="ugatherer" nprocs="18" type="gatherer"/>
+      <service name="vgatherer" nprocs="18" type="gatherer"/>
+      <service name="igatherer" nprocs="10" type="gatherer"/>
+      <service name="twriter" nprocs="8" type="writer"/>
+      <service name="uwriter" nprocs="6" type="writer"/>
+      <service name="vwriter" nprocs="6" type="writer"/>
+      <service name="iwriter" nprocs="4" type="writer"/>
+     </pool>
+    </pool_definition>
+  </context>
+
+<!-- ============================================================================================ -->
+<!-- NEMO  CONTEXT add and suppress the components you need                                       -->
+<!-- ============================================================================================ -->
+
+  <context id="nemo" default_pool_writer="Opool" default_pool_gatherer="Opool" src="./context_nemo.xml"/>       <!--  NEMO       -->
+
+</simulation>
