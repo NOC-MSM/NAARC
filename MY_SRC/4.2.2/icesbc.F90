@@ -271,7 +271,7 @@ CONTAINS
             !
             ! FORM-DRAG: for nn_frm = 2 or 3: no impact on ocean-heat transfer
             ! coefficient!
-            IF( ln_Cx_ice_frm .AND. nn_frm /= 1  ) THEN   ;   zdrag = drag_io(ji,jj)
+            IF( ln_Cx_ice_frm .AND. nn_frm /= 1 .AND. ht_0(ji,jj) > rn_frm_ht0 ) THEN   ;   zdrag = drag_io(ji,jj)
             ELSE                                          ;   zdrag = rn_cio ; ENDIF
             !
             zfric(ji,jj) = zdrag * ( 0.5_wp * (  ( zu_io*zu_io + zu_iom1*zu_iom1)   &   ! add () for NP repro

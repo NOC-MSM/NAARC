@@ -249,7 +249,7 @@ CONTAINS
       INTEGER ::   ios, ilocal_comm   ! local integers
       !!
       NAMELIST/namctl/ sn_cfctl, ln_timing, ln_diacfl, nn_isplt, nn_jsplt , nn_ictls,   &
-         &                                             nn_ictle, nn_jctls , nn_jctle
+         &                                             nn_ictle, nn_jctls , nn_jctle, ln_umax_ind
       NAMELIST/namcfg/ ln_read_cfg, cn_domcfg, ln_closea, ln_write_cfg, cn_domcfg_out, ln_use_jattr
       !!----------------------------------------------------------------------
       !

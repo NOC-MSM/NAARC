@@ -1,11 +1,17 @@
 #!/bin/bash
 #SBATCH --job-name=NAARC
-#SBATCH --time=00:20:00
-#SBATCH --account=n01-CANARI
-#SBATCH --partition=standard
-#SBATCH --qos=standard
-#SBATCH --nodes=51
+#SBATCH --partition=compute
+#SBATCH --time=03:00:00
 #SBATCH --ntasks-per-core=1
+#SBATCH --ntasks-per-node=64
+#SBATCH --ntasks-per-socket=32
+#SBATCH --nodes=26	
+
+echo $PWD
+
+export OMP_NUM_THREADS=1
+export I_MPI_SHM=off
+unset I_MPI_PMI_LIBRARY
 
 display_usage() {
    echo
@@ -49,9 +55,6 @@ done
 
 echo $YEAR $SPIN 
 
-# ARCHER2 support suggestion to reduce UCX error messages:
-export UCX_IB_REG_METHODS=direct
-
 #################### nemo runscript options ############################
 # For info on the parameters see namelist_ref                          #
 ########################################################################
@@ -59,7 +62,7 @@ rn_rdt=300          ; ln_zps='.false.'       ; ln_tmx_itf='.false.'
 ln_bt_auto='.true.' ; rn_bt_cmax=0.8         ; nn_baro=30
 nn_mxlice=2         ; nn_z0_ice=1            ; ln_rnf_new='.false.'
 ln_rstdate='.true.' ; ln_shlat2d='.true.'   ; nn_diaharm=1991
-rn_Cd0=2.5e-3       ; ln_loglayer='.true.'   ; ln_tide='.true.'
+rn_Cd0=2.5e-3       ; ln_loglayer='.true.'   ; ln_tide='.false.'
 ln_boost='.true.'  ; ln_gls='.true.'        ; ln_int_wave_drag='.false.' 
 ln_hpg_djc='.true.' ; ln_calc_tdiss='.false.'; ln_crt_fbk='.false.'
 ln_frm_drg='.false.'; rn_frm_ht0=0.0         ; ln_cdmin2d='.true.'
@@ -89,32 +92,8 @@ then
    #################### nemo runscript options #########################
    # The following options are for the MES domain_cfg.nc               #
    #####################################################################
-
-   if [ $SLURM_NNODES -eq 19 ]
-   then
-      SRUN_CMD=`./slurm_setup -S 16 -s 16 -m 1 -C 1524 -g 4 -N 128 -t 01:00:00 -a n01-CLASS -j se-nemo`
-   elif [ $SLURM_NNODES -eq 29 ]
-   then
-      SRUN_CMD=`./slurm_setup -S 16 -s 16 -m 1 -C 2973 -g 8 -N 128 -t 01:00:00 -a n01-CLASS -j se-nemo`
-   elif [ $SLURM_NNODES -eq 51 ]
-   then
-      SRUN_CMD=`./slurm_setup -S 24 -s 16 -m 1 -C 6131 -g 9000 -N 128 -t 01:00:00 -a n01-CLASS -j se-nemo`
-   elif [ $SLURM_NNODES -eq 68 ]
-   then
-      SRUN_CMD=`./slurm_setup -S 32 -s 16 -m 2 -C 8090 -g 9000 -N 128 -t 01:00:00 -a n01-CLASS -j se-nemo`
-   elif [ $SLURM_NNODES -eq 72 ]
-   then
-      SRUN_CMD=`./slurm_setup -S 64 -s 16 -m 1 -C 8090 -g 9000 -N 128 -t 01:00:00 -a n01-CLASS -j se-nemo`
-   elif [ $SLURM_NNODES -eq 54 ]
-   then
-      SRUN_CMD=`./slurm_setup -S 94 -s 8 -m 2 -C 6131 -g 9000 -N 128 -t 01:00:00 -a n01-CLASS -j se-nemo`
-  elif [ $SLURM_NNODES -eq 70 ]
-   then
-      SRUN_CMD=`./slurm_setup -S 94 -s 8 -m 2 -C 8090 -g 9000 -N 128 -t 01:00:00 -a n01-CLASS -j se-nemo`
-
-   else
-      exit
-   fi
+   
+   SRUN_CMD='mpiexec.hydra -print-rank-map -ppn 1 -np 140 ./xios_server.exe : -np 1326 ./nemo'
 
 else
 
@@ -122,21 +101,7 @@ else
    # The following options are for the ZPS domain_cfg.nc               #
    #####################################################################
 
-   if [ $SLURM_NNODES -eq 18 ]
-   then
-      SRUN_CMD=`./slurm_setup -S 16 -s 16 -m 1 -C 1509 -g 4 -N 128 -t 01:00:00 -a n01-CLASS -j se-nemo`
-   elif [ $SLURM_NNODES -eq 29 ]
-   then
-      SRUN_CMD=`./slurm_setup -S 16 -s 16 -m 1 -C 2964 -g 8 -N 128 -t 01:00:00 -a n01-CLASS -j se-nemo`
-   elif [ $SLURM_NNODES -eq 51 ]
-   then
-      SRUN_CMD=`./slurm_setup -S 16 -s 16 -m 1 -C 6221 -g 9000 -N 128 -t 01:00:00 -a n01-CLASS -j se-nemo`
-   elif [ $SLURM_NNODES -eq 67 ]
-   then
-      SRUN_CMD=`./slurm_setup -S 32 -s 16 -m 2 -C 7948 -g 9000 -N 128 -t 01:00:00 -a n01-CLASS -j se-nemo`
-   else
-      exit
-   fi
+   SRUN_CMD='mpiexec.hydra -print-rank-map -ppn 1 -np 16 ./xios_server.exe : -np 1326 ./nemo'
 
 fi
 
@@ -338,7 +303,7 @@ do
       date
       eval $SRUN_CMD &
       echo $SRUN_CMD &
-      ./time_step_chk $SLURM_JOB_ID $nn_itend &
+   #  ./time_step_chk $SLURM_JOB_ID $nn_itend &
    done
 
    wait

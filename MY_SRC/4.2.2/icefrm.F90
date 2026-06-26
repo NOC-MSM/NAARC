@@ -49,8 +49,8 @@ MODULE icefrm
                                                 ! geometrical parameter [0,1]
 
   ! Limits for stability
-   REAL(wp), PARAMETER :: camax    = 0.0112_wp  ! Maximum for atmospheric drag
-   REAL(wp), PARAMETER :: cwmax    = 0.02_wp    ! Maximum for ocean drag
+   REAL(wp), PARAMETER :: camax    = 0.0028_wp  ! 0.0112_wp  ! Maximum for atmospheric drag
+   REAL(wp), PARAMETER :: cwmax    = 0.01_wp    ! 0.02_wp    ! Maximum for ocean drag
    REAL(wp), PARAMETER :: camin    = 0.0007_wp  ! Minimum for atmospheric drag
    REAL(wp), PARAMETER :: cwmin    = 0.0025_wp  ! Minimum for ocean drag
 

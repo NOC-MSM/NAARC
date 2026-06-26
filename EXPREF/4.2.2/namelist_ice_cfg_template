@@ -60,7 +60,7 @@
 !------------------------------------------------------------------------------
 &namsbc         !   Ice surface boundary conditions
 !------------------------------------------------------------------------------
-   rn_cio           =   2.3e-03       ! JC ice-ocean drag coefficient (-) DEFAULT 1.0e-02 
+   rn_cio           =   5.e-03        ! ice-ocean drag coefficient (-) DEFAULT 1.0e-02 
 /
 !------------------------------------------------------------------------------
 &namini         !   Ice initialization

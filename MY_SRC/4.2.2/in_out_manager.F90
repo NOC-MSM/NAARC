@@ -125,6 +125,7 @@ MODULE in_out_manager
    TYPE(sn_ctl), SAVE :: sn_cfctl     !: run control structure for selective output, must have SAVE for default init. of sn_ctl
    LOGICAL ::   ln_timing        !: run control for timing
    LOGICAL ::   ln_diacfl        !: flag whether to create CFL diagnostics
+   LOGICAL ::   ln_umax_ind      !: flag whether to add i,j,k indices of U max to run.stat
    INTEGER ::   nn_ictls         !: Start i indice for the SUM control
    INTEGER ::   nn_ictle         !: End   i indice for the SUM control
    INTEGER ::   nn_jctls         !: Start j indice for the SUM control

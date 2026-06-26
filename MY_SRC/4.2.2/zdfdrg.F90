@@ -56,8 +56,9 @@ MODULE zdfdrg
    LOGICAL          ::   ln_boost     !: =T regional boost of Cd0 ; =F Cd0 horizontally uniform
    REAL(wp)         ::   rn_boost     !: local boost factor                                         [ - ]
 
-   REAL(wp), PUBLIC ::   r_Cdmin_top, r_Cdmax_top, r_z0_top, r_ke0_top   ! set from namdrg_top namelist values
-   REAL(wp), PUBLIC ::   r_Cdmin_bot, r_Cdmax_bot, r_z0_bot, r_ke0_bot   !  -    -  namdrg_bot    -       -
+   LOGICAL          ::   ln_cdmin2d   !: =T 2D varying Cdmin (ln_loglayer=T)
+   REAL(wp), PUBLIC ::   r_Cdmax_top, r_z0_top, r_ke0_top   ! set from namdrg_top namelist values
+   REAL(wp), PUBLIC ::   r_Cdmax_bot, r_z0_bot, r_ke0_bot   !  -    -  namdrg_bot    -       - 
 
    INTEGER ::              ndrg       ! choice of the type of drag coefficient
    !                                  ! associated indices:
@@ -69,8 +70,9 @@ MODULE zdfdrg
    LOGICAL , PUBLIC ::   l_zdfdrg           !: flag to update at each time step the top/bottom Cd
    LOGICAL          ::   l_log_not_linssh   !: flag to update at each time step the position ot the velocity point 
    !
-   REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:), PUBLIC ::   rCd0_top, rCd0_bot   !: precomputed top/bottom drag coeff. at t-point (>0)
-   REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:), PUBLIC ::   rCdU_top, rCdU_bot   !: top/bottom drag coeff. at t-point (<0)  [m/s]
+   REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:), PUBLIC :: r_Cdmin_top, r_Cdmin_bot !: set from namelist values or file
+   REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:), PUBLIC :: rCd0_top, rCd0_bot       !: precomputed top/bottom drag coeff. at t-point (>0)
+   REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:), PUBLIC :: rCdU_top, rCdU_bot       !: top/bottom drag coeff. at t-point (<0)  [m/s]
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
@@ -104,7 +106,7 @@ CONTAINS
       INTEGER                 , INTENT(in   ) ::   Kmm      ! ocean time level index
       !                       !               !!         !==  top or bottom variables  ==!
       INTEGER , DIMENSION(:,:), INTENT(in   ) ::   k_mk     ! wet level (1st or last)
-      REAL(wp)                , INTENT(in   ) ::   pCdmin   ! min drag value
+      REAL(wp), DIMENSION(:,:), INTENT(in   ) ::   pCdmin   ! min drag value
       REAL(wp)                , INTENT(in   ) ::   pCdmax   ! max drag value
       REAL(wp)                , INTENT(in   ) ::   pz0      ! roughness
       REAL(wp)                , INTENT(in   ) ::   pke0     ! background tidal KE
@@ -125,7 +127,7 @@ CONTAINS
             !
 !!JC: possible WAD implementation should modify line below if layers vanish
             zcd = (  vkarmn / LOG( zzz / pz0 )  )**2
-            zcd = pCd0(ji,jj) * MIN(  MAX( pCdmin , zcd ) , pCdmax  )   ! here pCd0 = mask*boost
+            zcd = pCd0(ji,jj) * MIN(  MAX( pCdmin(ji,jj) , zcd ) , pCdmax  )   ! here pCd0 = mask*boost
             pCdU(ji,jj) = - zcd * SQRT(  0.25 * ( zut*zut + zvt*zvt ) + pke0  )
          END_2D
       ELSE                                            !==  standard Cd  ==!
@@ -276,7 +278,7 @@ CONTAINS
       !
       !                     !==  BOTTOM drag setting  ==!   (applied at seafloor)
       !
-      ALLOCATE( rCd0_bot(jpi,jpj), rCdU_bot(jpi,jpj) )
+      ALLOCATE( rCd0_bot(jpi,jpj), rCdU_bot(jpi,jpj), r_Cdmin_bot(jpi,jpj) )
       CALL drg_init( 'BOTTOM'   , mbkt       ,                                         &   ! <== in
          &           r_Cdmin_bot, r_Cdmax_bot, r_z0_bot, r_ke0_bot, rCd0_bot, rCdU_bot )   ! ==> out
       !
@@ -287,7 +289,7 @@ CONTAINS
       ENDIF
       !
       IF( ln_isfcav ) THEN
-         ALLOCATE( rCd0_top(jpi,jpj))
+         ALLOCATE( rCd0_top(jpi,jpj), r_Cdmin_top(jpi,jpj) )
          CALL drg_init( 'TOP   '   , mikt       ,                                         &   ! <== in
             &           r_Cdmin_top, r_Cdmax_top, r_z0_top, r_ke0_top, rCd0_top, rCdU_top )   ! ==> out
       ENDIF
@@ -305,21 +307,23 @@ CONTAINS
       !!----------------------------------------------------------------------
       CHARACTER(len=6)        , INTENT(in   ) ::   cd_topbot       ! top/ bot indicator
       INTEGER , DIMENSION(:,:), INTENT(in   ) ::   k_mk            ! 1st/last  wet level 
-      REAL(wp)                , INTENT(  out) ::   pCdmin, pCdmax  ! min and max drag coef. [-]
+      REAL(wp), DIMENSION(:,:), INTENT(  out) ::   pCdmin          ! min drag coef. [-] 
+      REAL(wp)                , INTENT(  out) ::   pCdmax          ! max drag coef. [-]
       REAL(wp)                , INTENT(  out) ::   pz0             ! roughness              [m]
       REAL(wp)                , INTENT(  out) ::   pke0            ! background KE          [m2/s2]
       REAL(wp), DIMENSION(:,:), INTENT(  out) ::   pCd0            ! masked precomputed part of the non-linear drag coefficient
       REAL(wp), DIMENSION(:,:), INTENT(  out) ::   pCdU            ! minus linear drag*|U| at t-points  [m/s]
       !!
-      CHARACTER(len=40) ::   cl_namdrg, cl_file, cl_varname, cl_namref, cl_namcfg  ! local names 
+      CHARACTER(len=40) ::   cl_namdrg, cl_namref  , cl_namcfg              ! local names 
+      CHARACTER(len=40) ::   cl_file1 , cl_varname1, cl_file2 , cl_varname2 ! local names
       INTEGER ::   ji, jj              ! dummy loop indexes
       LOGICAL ::   ll_top, ll_bot      ! local logical
       INTEGER ::   ios, inum, imk      ! local integers
       REAL(wp)::   zmsk, zzz, zcd      ! local scalars
       REAL(wp), DIMENSION(jpi,jpj) ::   zmsk_boost   ! 2D workspace
       !!
-      NAMELIST/namdrg_top/ rn_Cd0, rn_Uc0, rn_Cdmax, rn_ke0, rn_z0, ln_boost, rn_boost
-      NAMELIST/namdrg_bot/ rn_Cd0, rn_Uc0, rn_Cdmax, rn_ke0, rn_z0, ln_boost, rn_boost
+      NAMELIST/namdrg_top/ rn_Cd0, rn_Uc0, rn_Cdmax, rn_ke0, rn_z0, ln_boost, rn_boost, ln_cdmin2d
+      NAMELIST/namdrg_bot/ rn_Cd0, rn_Uc0, rn_Cdmax, rn_ke0, rn_z0, ln_boost, rn_boost, ln_cdmin2d
       !!----------------------------------------------------------------------
       !
       !                          !==  set TOP / BOTTOM specificities  ==!
@@ -329,18 +333,22 @@ CONTAINS
       SELECT CASE (cd_topbot)
       CASE( 'TOP   ' )
          ll_top = .TRUE.
-         cl_namdrg  = 'namdrg_top'
-         cl_namref  = 'namdrg_top in reference     namelist'
-         cl_namcfg  = 'namdrg_top in configuration namelist'
-         cl_file    = 'tfr_coef.nc'
-         cl_varname = 'tfr_coef'
+         cl_namdrg   = 'namdrg_top'
+         cl_namref   = 'namdrg_top in reference     namelist'
+         cl_namcfg   = 'namdrg_top in configuration namelist'
+         cl_file1    = 'tfr_coef.nc'
+         cl_varname1 = 'tfr_coef'
+         cl_file2    = 'tfr_cdmin_2d.nc'
+         cl_varname2 = 'tfr_cdmin'
       CASE( 'BOTTOM' )
          ll_bot = .TRUE.
-         cl_namdrg  = 'namdrg_bot'
-         cl_namref  = 'namdrg_bot  in reference     namelist'
-         cl_namcfg  = 'namdrg_bot  in configuration namelist'
-         cl_file    = 'bfr_coef.nc'
-         cl_varname = 'bfr_coef'
+         cl_namdrg   = 'namdrg_bot'
+         cl_namref   = 'namdrg_bot  in reference     namelist'
+         cl_namcfg   = 'namdrg_bot  in configuration namelist'
+         cl_file1    = 'bfr_coef.nc'
+         cl_varname1 = 'bfr_coef'
+         cl_file2    = 'bfr_cdmin_2d.nc'
+         cl_varname2 = 'bfr_cdmin'
       CASE DEFAULT
          CALL ctl_stop( 'drg_init: bad value for cd_topbot ' )
       END SELECT
@@ -368,8 +376,20 @@ CONTAINS
          WRITE(numout,*) '         associated boost factor              rn_boost = ', rn_boost
       ENDIF
       !
-      !                          !==  return some namelist parametres  ==!   (used in non_lin and loglayer cases)
-      pCdmin = rn_Cd0
+      !                          !==  return some namelist parametres  ==!  (used in non_lin and loglayer cases)
+      !
+      IF( ln_cdmin2d ) THEN      !* 2D varying pCdmin for the loglayer case
+        IF(lwp) WRITE(numout,*)
+        IF(lwp) WRITE(numout,*) '   ==>>>   use a 2D varying Cdmin read in ', TRIM(cl_file2), ' file'
+        CALL iom_open ( TRIM(cl_file2), inum )
+        CALL iom_get  ( inum, jpdom_global, TRIM(cl_varname2), pCdmin, 1 )
+        CALL iom_close( inum)
+        DO_2D_OVR( nn_hls-1, nn_hls-1, nn_hls-1, nn_hls-1 )
+          pCdmin(ji,jj) =  MAX( pCdmin(ji,jj) , rn_Cd0 )
+        END_2D
+      ELSE                          !* no boost:   boost factor = 1
+        pCdmin(:,:)  = rn_Cd0
+      ENDIF
       pCdmax = rn_Cdmax
       pz0    = rn_z0
       pke0   = rn_ke0
@@ -378,11 +398,11 @@ CONTAINS
       !
       IF( ln_boost ) THEN           !* regional boost:   boost factor = 1 + regional boost
          IF(lwp) WRITE(numout,*)
-         IF(lwp) WRITE(numout,*) '   ==>>>   use a regional boost read in ', TRIM(cl_file), ' file'
+         IF(lwp) WRITE(numout,*) '   ==>>>   use a regional boost read in ', TRIM(cl_file1), ' file'
          IF(lwp) WRITE(numout,*) '           using enhancement factor of ', rn_boost
          ! cl_varname is a coefficient in [0,1] giving where to apply the regional boost
-         CALL iom_open ( TRIM(cl_file), inum )
-         CALL iom_get  ( inum, jpdom_global, TRIM(cl_varname), zmsk_boost, 1 )
+         CALL iom_open ( TRIM(cl_file1), inum )
+         CALL iom_get  ( inum, jpdom_global, TRIM(cl_varname1), zmsk_boost, 1 )
          CALL iom_close( inum)
          zmsk_boost(:,:) = 1._wp + rn_boost * zmsk_boost(:,:)
          !
@@ -432,7 +452,13 @@ CONTAINS
          IF(lwp) WRITE(numout,*) '   with   a logarithmic Cd0 formulation Cd0 = ( vkarman log(z/z0) )^2 ,'
          IF(lwp) WRITE(numout,*) '          a background velocity module of (rn_ke0)^1/2 = ', SQRT(pke0), 'm/s), '
          IF(lwp) WRITE(numout,*) '          a logarithmic formulation: a roughness of ', pz0, ' meters,   and '
-         IF(lwp) WRITE(numout,*) '          a proportionality factor bounded by min/max values of ', pCdmin, pCdmax
+         IF(lwp) WRITE(numout,*) '          a proportionality factor bounded by '
+         IF( ln_cdmin2d ) THEN
+           IF(lwp) WRITE(numout,*) '              a max value of ', pCdmax, 'and '
+           IF(lwp) WRITE(numout,*) '              a min 2D Cdmin scalar field read in ', TRIM(cl_file2), ' file'
+         ELSE
+           IF(lwp) WRITE(numout,*) '              min/max values of ', rn_Cd0, pCdmax
+         ENDIF
          !
          l_zdfdrg = .TRUE.          !* Cd*|U| updated at each time-step (it depends on ocean velocity)
          !

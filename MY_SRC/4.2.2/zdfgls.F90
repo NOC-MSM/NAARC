@@ -26,7 +26,7 @@ MODULE zdfgls
    USE zdfmxl         ! mixed layer
    USE sbcwave , ONLY : hsw   ! significant wave height
 #if defined key_si3
-   USE ice, ONLY: hm_i, h_i
+   USE ice, ONLY: hm_i, h_i, drag_io
 #endif
 #if defined key_cice
    USE sbc_ice, ONLY: h_i
@@ -157,7 +157,7 @@ CONTAINS
       REAL(wp) ::   zratio, zrn2, zflxb, sh     , z_en  !   -      -
       REAL(wp) ::   prod, buoy, diss, zdiss, sm         !   -      -
       REAL(wp) ::   gh, gm, shr, dif, zsqen, zavt, zavm !   -      -
-      REAL(wp) ::   zmsku, zmskv                        !   -      -
+      REAL(wp) ::   zmsku, zmskv, zrough                !   -      -
       REAL(wp), DIMENSION(A2D(nn_hls))     ::   zdep
       REAL(wp), DIMENSION(A2D(nn_hls))     ::   zkar
       REAL(wp), DIMENSION(A2D(nn_hls))     ::   zflxs                 ! Turbulence fluxed induced by internal waves
@@ -251,6 +251,15 @@ CONTAINS
             zhsro(ji,jj) = ( (1._wp-zice_fra(ji,jj)) * zhsro(ji,jj) + zice_fra(ji,jj) * MAXVAL(h_i(ji,jj,:)) )*tmask(ji,jj,1)  + (1._wp - tmask(ji,jj,1))*rn_hsro
          END_2D
 #endif
+      CASE( 4 )                      ! scaling with sea-ice roughness from SI3
+#if defined key_si3
+         DO_2D( nn_hls-1, nn_hls-1, nn_hls-1, nn_hls-1 )
+            zrough = 10._wp / exp(sqrt(vkarmn**2 / drag_io(ji,jj)))
+            zhsro(ji,jj) = ( (1._wp-zice_fra(ji,jj)) * zhsro(ji,jj) + zice_fra(ji,jj) * zrough )*tmask(ji,jj,1)  + (1._wp - tmask(ji,jj,1))*rn_hsro
+         END_2D
+#endif
+         !
+
          !
       END SELECT
       !
@@ -932,8 +941,9 @@ CONTAINS
             CASE( 1 )   ;   WRITE(numout,*) '   ==>>>   scaling with constant sea-ice thickness'
             CASE( 2 )   ;   WRITE(numout,*) '   ==>>>   scaling with mean     sea-ice thickness'
             CASE( 3 )   ;   WRITE(numout,*) '   ==>>>   scaling with max      sea-ice thickness'
+            CASE( 4 )   ;   WRITE(numout,*) '   ==>>>   scaling with drag_io'
             CASE DEFAULT
-               CALL ctl_stop( 'zdf_gls_init: wrong value for nn_mxlice, should be 0,1,2,3 ')
+               CALL ctl_stop( 'zdf_gls_init: wrong value for nn_mxlice, should be 0,1,2,3,4 ')
          END SELECT
          IF     ( (nn_mxlice>0).AND.(nn_ice==0) ) THEN
             CALL ctl_stop( 'zdf_gls_init: with no ice at all, nn_mxlice must be 0 ') 

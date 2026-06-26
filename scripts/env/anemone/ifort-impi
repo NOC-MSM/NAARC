@@ -1,2 +1,3 @@
-module restore
+module purge
 module load NEMO/prg-env
+module load libfabric/1.18.0-GCCcore-12.3.0
