@@ -30,7 +30,7 @@ MODULE tide_mod
    PUBLIC   tide_update           ! called by stp
    PUBLIC   tide_init_harmonics   ! called internally and by module diaharm
    PUBLIC   upd_tide              ! called in dynspg_... modules
-
+   PUBLIC tide_init_diss
    INTEGER, PUBLIC, PARAMETER ::   jpmax_harmo = 64   !: maximum number of harmonic components
 
    TYPE ::    tide
@@ -105,12 +105,22 @@ MODULE tide_mod
    ! Coefficients used to compute sh_xi and sh_nu in subroutine astronomic_angle
    ! according to two equations given in the explanation of Table 6 of S58
    REAL(wp) ::   rxinu1, rxinu2
-
+   ! davbyr : Switch for internal wave drag on barotropic currents.
+   LOGICAL , PUBLIC :: ln_int_wave_drag, ln_calc_tdiss !:
+   CHARACTER(lc), PUBLIC ::   cn_int_wave_drag   !:
+   CHARACTER(lc), PUBLIC ::   cn_h_rough        !:
+   REAL(wp), PUBLIC      ::   rn_kappa_tdiss,tdiss_mindepth   !: Parameters for IW dissipation
+   ! davbyr: Tide drag
+   REAL(wp), PUBLIC,  ALLOCATABLE, SAVE, DIMENSION(:,:) ::   tdiss, h2rough,N2mean
+   ! END davbyr
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
    !! $Id: tide_mod.F90 13286 2020-07-09 15:48:29Z smasson $ 
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
+!! * Substitutions
+#  include "do_loop_substitute.h90"
+
 CONTAINS
 
    SUBROUTINE tide_init
@@ -124,7 +134,9 @@ CONTAINS
       NAMELIST/nam_tide/ln_tide, nn_tide_var, ln_tide_dia, ln_tide_pot, rn_tide_gamma, &
          &              ln_scal_load, ln_read_load, cn_tide_load,         &
          &              ln_tide_ramp, rn_scal_load, rn_tide_ramp_dt,      &
-         &              sn_tide_cnames
+         &              sn_tide_cnames,                                    &
+         &              ln_int_wave_drag,ln_calc_tdiss, cn_int_wave_drag, &
+         &              cn_h_rough,rn_kappa_tdiss,tdiss_mindepth
       !!----------------------------------------------------------------------
       !
       ! Initialise all array elements of sn_tide_cnames, as some of them
@@ -154,7 +166,21 @@ CONTAINS
             WRITE(numout,*) '         Apply ramp on tides at startup          ln_tide_ramp    = ', ln_tide_ramp
             WRITE(numout,*) '         Fraction of SSH used in scal. approx.   rn_scal_load    = ', rn_scal_load
             WRITE(numout,*) '         Duration (days) of ramp                 rn_tide_ramp_dt = ', rn_tide_ramp_dt
+            WRITE(numout,*) '         Internal Wave Drag Parameterization     ln_int_wave_drag = ', ln_int_wave_drag
+            IF(ln_int_wave_drag) WRITE(numout,*) 'cn_int_wave_drag = ', cn_int_wave_drag
          ENDIF
+            IF( ln_int_wave_drag )THEN !davbyr: Allocation and read tdiss
+               ALLOCATE( tdiss(jpi, jpj) )
+               tdiss(:,:) = 0.0_wp
+               IF ( ln_calc_tdiss ) THEN
+                ALLOCATE( h2rough(jpi, jpj) )
+                ALLOCATE( N2mean(jpi, jpj) )
+                h2rough(:,:)     = 0.0_wp
+                N2mean(:, :) = 0.0_wp
+
+               ENDIF
+               CALL tide_init_diss
+            ENDIF
       ELSE
          rn_scal_load = 0._wp 
 
@@ -757,6 +783,52 @@ CONTAINS
       END IF
       !
    END SUBROUTINE upd_tide
+
+   SUBROUTINE tide_init_diss !davbyr: subroutine
+      !!----------------------------------------------------------------------
+      !!                 ***  ROUTINE tide_init_diss  ***
+      !!----------------------------------------------------------------------
+      INTEGER :: inum                 ! Logical unit of input file
+      INTEGER :: ji, jj,jidbg,jjdbg    ! dummy loop indices
+
+      !!----------------------------------------------------------------------
+      IF (ln_calc_tdiss) THEN
+        IF(lwp) THEN
+         WRITE(numout,*)
+         WRITE(numout,*) 'tide_init_diss : Read roughness (h) from file:',cn_h_rough
+         WRITE(numout,*) '~~~~~~~~~~~~~~ '
+        ENDIF
+
+        CALL iom_open(cn_h_rough, inum)
+        CALL iom_get (inum, jpdom_auto, 'h', h2rough(:,:))
+        CALL iom_close(inum)
+        CALL iom_close( inum )
+        ! mask hrough in shllow water
+
+       DO_2D( 0, 0, 0, 0 )
+          h2rough(ji,jj) = h2rough(ji,jj) * h2rough(ji,jj) ! read in h, need h^2
+          IF ( gdepw_0(ji,jj,mbkt(ji,jj)+1) < tdiss_mindepth ) THEN
+           h2rough(ji,jj) = 0.0
+          ENDIF
+       END_2D
+        CALL lbc_lnk( 'tide_init_diss', h2rough, 'T', 1._wp )
+
+        !!!!!!!
+      ELSE
+        IF(lwp) THEN
+         WRITE(numout,*)
+         WRITE(numout,*) 'tide_init_diss : Read tidal dissipation from file:',cn_int_wave_drag
+         WRITE(numout,*) '~~~~~~~~~~~~~~ '
+        ENDIF
+
+        CALL iom_open(cn_int_wave_drag, inum)
+        CALL iom_get (inum, jpdom_auto, 'tdiss', tdiss(:,:))
+        CALL iom_close(inum)
+        CALL iom_close( inum )
+
+      ENDIF
+
+   END SUBROUTINE tide_init_diss
 
    !!======================================================================
 END MODULE tide_mod

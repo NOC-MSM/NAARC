@@ -63,7 +63,9 @@ MODULE dynspg_ts
    USE trddyn         ! trend manager: dynamics
 
    USE iom   ! to remove
-
+!jth IWD
+   USE tide_mod
+!
    IMPLICIT NONE
    PRIVATE
 
@@ -82,7 +84,10 @@ MODULE dynspg_ts
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:) ::   ftnw, ftne         ! triad of coriolis parameter
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:) ::   ftsw, ftse         ! (only used with een vorticity scheme)
    REAL(wp), ALLOCATABLE,       DIMENSION(:,:) ::   zua_tmp, zva_tmp     ! RDP: temporary save of 2d momentum for WAD and BDY
-
+!jth_IWD
+   REAL(wp),PUBLIC, SAVE, ALLOCATABLE, DIMENSION(:,:)   :: un_detide,vn_detide ! arrays for de-tided barotropic currents
+   REAL(wp),PUBLIC, SAVE, ALLOCATABLE, DIMENSION(:,:,:)   :: un_25,vn_25 !arrays for 25hr running means
+!
    REAL(wp) ::   r1_12 = 1._wp / 12._wp   ! local ratios
    REAL(wp) ::   r1_8  = 0.125_wp         !
    REAL(wp) ::   r1_4  = 0.25_wp          !
@@ -317,12 +322,12 @@ CONTAINS
          ! Output constant forcing terms (excluding top and bottom stresses) as diagnostics.
          CALL trd_dyn( zu_frc, zv_frc, jpdyn_frc2d, kt, Kmm)
          !
-         CALL dyn_drg_init( Kbb, Kmm, puu, pvv, puu_b, pvv_b, &     ! also provide the barotropic drag coefficients
+         CALL dyn_drg_init(kt, Kbb, Kmm, puu, pvv, puu_b, pvv_b, &     ! also provide the barotropic drag coefficients
               &             zu_frc, zv_frc, zCdU_u, zCdU_v,   &
               &             ztfrtrdu, ztfrtrdv, zbfrtrdu, zbfrtrdv )
          !
       ELSE				     !* remove baroclinic drag AND provide the barotropic drag coefficients
-         CALL dyn_drg_init( Kbb, Kmm, puu, pvv, puu_b, pvv_b, zu_frc, zv_frc, zCdU_u, zCdU_v )
+         CALL dyn_drg_init(kt, Kbb, Kmm, puu, pvv, puu_b, pvv_b, zu_frc, zv_frc, zCdU_u, zCdU_v )
       ENDIF
       !
       !                                   !=  Add atmospheric pressure forcing  =!
@@ -749,6 +754,14 @@ CONTAINS
                END_2D
             ENDIF
          ENDIF
+!jth_IWD Add internal wave drag
+        IF ( ln_int_wave_drag .AND. .NOT. ll_wd ) THEN
+            DO_2D( 0, 1, 0, 1 )
+                  zu_trd(ji,jj) = zu_trd(ji,jj) - r1_2*( tdiss(ji+1,jj)+ tdiss(ji,jj))  * ( un_e(ji,jj) - un_detide(ji,jj) ) * hur_e(ji,jj)
+                  zv_trd(ji,jj) = zv_trd(ji,jj) - r1_2*( tdiss(ji,jj+1)+ tdiss(ji,jj))  * ( vn_e(ji,jj) - vn_detide(ji,jj) ) * hvr_e(ji,jj)
+            END_2D
+        ENDIF
+!!
          !
          ! Set next velocities:
          !     Compute barotropic speeds at step jit+1    (h : total height of the water colomn)
@@ -1131,6 +1144,13 @@ CONTAINS
                CALL iom_get( numror, jpdom_auto, 'ub_e'     ,    ub_e(:,:), cd_type = 'U', psgn = -1._wp )   
                CALL iom_get( numror, jpdom_auto, 'vb_e'     ,    vb_e(:,:), cd_type = 'V', psgn = -1._wp )
             ENDIF
+!jth IWD
+            IF (ln_int_wave_drag) THEN
+                CALL iom_get( numror, jpdom_auto, 'un_detide'  , un_detide  (:,:), cd_type = 'U', psgn = -1._wp )
+                CALL iom_get( numror, jpdom_auto, 'vn_detide'  , vn_detide  (:,:), cd_type = 'V', psgn = -1._wp )
+                CALL iom_get( numror, jpdom_auto, 'un_25'      , un_25  (:,:,:), cd_type = 'U', psgn = -1._wp )
+                CALL iom_get( numror, jpdom_auto, 'vn_25'      , vn_25  (:,:,:), cd_type = 'V', psgn = -1._wp )
+            END IF
 #if defined key_agrif
             ! Read time integrated fluxes
             IF ( .NOT.Agrif_Root() ) THEN
@@ -1167,6 +1187,13 @@ CONTAINS
             CALL iom_rstput( kt, nitrst, numrow, 'ub_e'     ,    ub_e(:,:) )
             CALL iom_rstput( kt, nitrst, numrow, 'vb_e'     ,    vb_e(:,:) )
          ENDIF
+!jth IWD
+         IF (ln_int_wave_drag) THEN
+            CALL iom_rstput( kt, nitrst, numrow, 'un_detide'    ,   un_detide(:,:) )
+            CALL iom_rstput( kt, nitrst, numrow, 'vn_detide'    ,   vn_detide(:,:) )
+            CALL iom_rstput( kt, nitrst, numrow, 'un_25'    ,       un_25(:,:,:) )
+            CALL iom_rstput( kt, nitrst, numrow, 'vn_25'    ,       vn_25(:,:,:) )
+         END IF
 #if defined key_agrif
          ! Save time integrated fluxes
          IF ( .NOT.Agrif_Root() ) THEN
@@ -1188,6 +1215,8 @@ CONTAINS
       INTEGER  ::   ji ,jj              ! dummy loop indices
       REAL(wp) ::   zxr2, zyr2, zcmax   ! local scalar
       REAL(wp), DIMENSION(jpi,jpj) ::   zcu
+!jth_IWD
+      INTEGER  ::   ierr
       !!----------------------------------------------------------------------
       !
       ! Max courant number for ext. grav. waves
@@ -1268,6 +1297,17 @@ CONTAINS
       !
       !                             ! Allocate time-splitting arrays
       IF( dyn_spg_ts_alloc() /= 0    )   CALL ctl_stop('STOP', 'dyn_spg_init: failed to allocate dynspg_ts  arrays' )
+
+!jth_IWD
+!     allocate arrays and initialise
+      IF (ln_int_wave_drag) THEN
+         ALLOCATE( un_detide(jpi,jpj), vn_detide(jpi,jpj),un_25(jpi,jpj,25), vn_25(jpi,jpj,25), STAT=ierr )
+         IF( ierr /= 0 )   CALL ctl_stop( 'dynspg_ts_init IWD: failed to allocate arrays' )
+         un_detide(:,:) = 0._wp
+         vn_detide(:,:) = 0._wp
+         un_25(:,:,:) = 0._wp
+         vn_25(:,:,:) = 0._wp
+      ENDIF
       !
       !                             ! read restart when needed
       CALL ts_rst( nit000, 'READ' )
@@ -1482,7 +1522,7 @@ CONTAINS
    END SUBROUTINE wad_Umsk
 
 
-   SUBROUTINE dyn_drg_init( Kbb, Kmm, puu, pvv, puu_b, pvv_b, pu_RHSi, pv_RHSi, pCdU_u, pCdU_v, &
+   SUBROUTINE dyn_drg_init(kt, Kbb, Kmm, puu, pvv, puu_b, pvv_b, pu_RHSi, pv_RHSi, pCdU_u, pCdU_v, &
               &             ptfrtrdu, ptfrtrdv, pbfrtrdu, pbfrtrdv )
       !!----------------------------------------------------------------------
       !!                  ***  ROUTINE dyn_drg_init  ***
@@ -1501,10 +1541,17 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj), INTENT(inout), OPTIONAL :: ptfrtrdu, ptfrtrdv ! top friction trends
       REAL(wp), DIMENSION(jpi,jpj), INTENT(inout), OPTIONAL :: pbfrtrdu, pbfrtrdv ! bottom friction trends
       !
-      INTEGER  ::   ji, jj   ! dummy loop indices
+      INTEGER  ::   ji, jj, jk   ! dummy loop indices
       INTEGER  ::   ikbu, ikbv, iktu, iktv
       REAL(wp) ::   zztmp
       REAL(wp), DIMENSION(jpi,jpj) ::   zu_i, zv_i
+!!jth_IWD
+      INTEGER, INTENT(in)  ::   kt   ! ocean time-step index
+
+      REAL(wp), SAVE ::   r1_25 = 0.04_wp   ! =1/25
+      INTEGER                          ::   i_steps                           ! no of timesteps per hour
+      INTEGER                          ::   i_is_25hrs                           ! flag if 1st 25hrs have passed (1=yes)
+!!
       !!----------------------------------------------------------------------
       !
       !                    !==  Set the barotropic drag coef.  ==!
@@ -1599,6 +1646,87 @@ CONTAINS
          !
       ENDIF
       !
+!jth IWD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+! Calculate detided barotropic velocity for use with internal wave drag
+      IF ( ln_int_wave_drag ) THEN
+       IF( MOD( 3600,NINT(rdt) ) == 0 ) THEN
+          i_steps = 3600/NINT(rdt)
+       ELSE
+          CALL ctl_stop('STOP', "dynspg_ts int_wave_drag : timestep must give MOD(3600,rdt) = 0 otherwise no hourly values are possible")
+       ENDIF
+
+!cw_IWD start
+! The following loop may no longer be necessary, as un_detide, vn_detide are
+! now initialised to zero and are only updated if at least 25 hours after the
+! initialisation time or if restarted and stored variables read in.
+!cw_IWD end
+
+! is it first hour in a initialised (i.e. non-restarted) run?  If so, set un_detide, vn_detide to zero.
+       IF (kt < i_steps) THEN
+          un_detide(:,:) = 0.0 ! un_b(:,:)
+          vn_detide(:,:) = 0.0 ! vn_b(:,:)
+       ENDIF
+
+!cw_IWD start
+! Doing restarts with un_25, un_detide, ... now, so amend following line to:
+!       IF( MOD( kt, i_steps ) == 0  .AND. kt /= nn_it000 ) THEN
+       IF( MOD( kt, i_steps ) == 0  ) THEN ! XXXXXXXXX HOURLY LOOP START XXXXXX
+!cw_IWD end
+
+! if at least 25 hrs after the initialisation time (from kt=1), then set
+! i_is_25hrs =1 else 0.
+                IF (kt >= 25 * i_steps) THEN
+                  i_is_25hrs = 1 !start accumulating hourly values into window
+                ELSE
+                  i_is_25hrs = 0 !do not accumulate yet
+                ENDIF
+
+!
+         DO_2D( 0, 0, 0, 0 )
+        ! Shift arrays forward by 1 hr
+                        un_25(ji,jj,1:24) = un_25(ji,jj,2:25)
+                        vn_25(ji,jj,1:24) = vn_25(ji,jj,2:25)
+        ! fill last value
+                        un_25(ji,jj,25) = puu_b(ji,jj,Kmm)
+                        vn_25(ji,jj,25) = pvv_b(ji,jj,Kmm)
+        ! set un_detide if more than 25hrs since start of run, otherwise set to un_b
+                        un_detide(ji,jj) = r1_25 * sum(un_25(ji,jj,:)) * i_is_25hrs + ( 1 - i_is_25hrs ) * 0.0 !un_b(ji,jj)
+                        vn_detide(ji,jj) = r1_25 * sum(vn_25(ji,jj,:)) * i_is_25hrs + ( 1 - i_is_25hrs ) * 0.0 !vn_b(ji,jj)
+        END_2D
+
+                 IF ( ln_calc_tdiss ) THEN
+!!!! Simmons et al. Ocean Modelling (2004)
+!jth              N2mean(:,:) =  SUM( e3w_n(:,:,:) * rn2(:,:,:) * wmask(:,:,:) , DIM=3 ) / SUM( e3w_n(:,:,:) * wmask(:,:,:) , DIM=3 )  * tmask(:,:,1)
+!jth avoid divide by zero
+                 N2mean(:,:) = 0.0
+                 DO jk = 1, jpkm1
+                    N2mean(:,:)= N2mean(:,:) + e3w(:,:,jk,Kmm) * rn2(:,:,jk) * wmask(:,:,jk)
+                 END DO
+                 N2mean(:,:)= N2mean(:,:) / (ht(:,:) + 1._wp - tmask(:,:,1) ) *  tmask(:,:,1)
+                 !N2mean(:,:) =  SUM( e3w(:,:,:,Kmm) * rn2(:,:,:) * wmask(:,:,:) , DIM=3 ) / (ht(:,:) + 1._wp - tmask(:,:,1) ) * tmask(:,:,1)
+
+         DO_2D( 1, 0, 1, 0 )  !need to check  original is DO jj = 2, jpj
+                      tdiss(ji,jj) = 0.5 * rn_kappa_tdiss * h2rough(ji,jj)*sqrt(max(N2mean(ji,jj),0.0))
+         END_2D
+                 END IF
+!!!!!!!!!!!!!!!!!!!!
+                 !jidbg= 477
+                 !jjdbg= 170
+
+                 !ji=jidbg-nimpp+1
+                 !jj=jjdbg-njmpp+1
+                 !if (ji>0 .and. ji < jpi .and. jj > 0 .and. jj < jpj)  then
+                 !write(68,'(1I5,4e12.4)') kt,tdiss(ji,jj),h2rough(ji,jj),sqrt(max(N2mean(ji,jj),0.0)), wmask(ji,jj,imk)
+                 !write(68,*) kt,(ht_n(ji,jj) + 1._wp - tmask(ji,jj,1) ),SUM( e3w_n(ji,jj,:) * wmask(ji,jj,:) , DIM=1 )
+
+                 !    flush(68)
+                 !endif
+
+
+                ENDIF
+      ENDIF              ! XXXXXXXXXXX END OF HOURLY LOOP XXXXXX
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    END SUBROUTINE dyn_drg_init
 
    SUBROUTINE ts_bck_interp( jn, ll_init,       &   ! <== in

@@ -244,11 +244,12 @@
             !
       ln_tide_ramp  = XXX_RMP_XXX,               !  Use linear ramp for tides at startup
          rn_tide_ramp_dt = 28.               !  ramp duration in days
-!     ln_calc_tdiss = XXX_CTD_XXX ,   ! calculate tdiss rather than reading in
-!        cn_h_rough = 'INPUTS/h_RMS_topog_anom.nc', ! roughness file
-!        rn_kappa_tdiss = 0.00075398 ! x12 value  0.00006283,  ! wave number Jayne and Laurence 2004 value !282.74333! increasedwith x1500^2 x2
-!        tdiss_mindepth = 200.0 ! minimum depth to apply tdiss parameterisation 
-!
+        ln_int_wave_drag = XXX_TDG_XXX,
+        ! ln_calc_tdiss = XXX_CTD_XXX ,   ! calculate tdiss rather than reading in !!This is redundent
+        cn_h_rough = 'INPUTS/h_rough_eORCA12_GEBCO2023.nc', ! roughness file
+        rn_kappa_tdiss =0.00025 ! x1/3 for ORCA12! 0.00075398 ! x12 value  0.00006283,  ! wave number Jayne and Laurence 2004 value !282.74333! increasedwith x1500^2 x2
+        tdiss_mindepth = 500.0 ! minimum depth to apply tdiss parameterisation 
+
       sn_tide_cnames(1) = 'Sa',
       sn_tide_cnames(2) = 'Ssa',
       sn_tide_cnames(3) = 'Mm',
