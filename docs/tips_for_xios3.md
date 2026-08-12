@@ -11,7 +11,14 @@ If no xios\_client\_\*.out files are made xios3 isn't running.
 It may be that XIOS is getting killed too soon before running down and saving output. The hanging can be cause by memory issues from not assigning enough processors to either xios nprocs or not enough nodes to the job your submitting.
 For exmaple with NAARC, setting nprocs in iodef.xml to 42 wasn't enought for the month 3d output requested and there was an issue with no output being written.
 
-The mapping of processors in the submitted job (S num\_servers) needs to match nprocs assigned for xios3. This can be worked out by running the job and checking the log files if number of nodes is high enough and nproc is high enough. Or, the brute force solution is to count the 0's in the map and match that to the tasks allocated in iodef.xml
+The servers in the submitted job (S num\_servers) needs to match nprocs assigned for xios3. Then the mapping (C) can be worked out by running the job and checking the log files if number of nodes is high enough and nproc is high enough. 
+===>>> : W A R N I N G
+ 
+          ===============
+ 
+    The number of mpi processes:  6131
+    exceeds the maximum number of ocean subdomains =  6122 
+Or, the brute force solution is to count the 0's in the map and match that to the tasks allocated in iodef.xml
 
 Third:
 There may be a issue with slow start up time of XIOS3.
