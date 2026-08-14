@@ -136,7 +136,7 @@ case "${NEMO_VER}"
            cd nemo
            case "${HPC_TARG}"
              in
-             archer2) git sparse-checkout add /makenemo /mk /src /cfgs/SHARED /cfgs/ref_cfgs.txt /ext
+             archer2) git sparse-checkout add makenemo mk src cfgs/SHARED cfgs/ref_cfgs.txt ext
 	              ;;
              *)       git sparse-checkout add makenemo mk src cfgs/SHARED cfgs/ref_cfgs.txt ext
 	              ;;
@@ -148,7 +148,7 @@ case "${NEMO_VER}"
            cd nemo
            case "${HPC_TARG}"
              in
-             archer2) git sparse-checkout add /makenemo /mk /src /cfgs/SHARED /cfgs/ref_cfgs.txt /ext
+             archer2) git sparse-checkout add makenemo mk src cfgs/SHARED cfgs/ref_cfgs.txt ext
 	              ;;
              *)       git sparse-checkout add makenemo mk src cfgs/SHARED cfgs/ref_cfgs.txt ext
 	              ;;
@@ -195,17 +195,20 @@ esac
 
 
 if [[ "$NEMO_VER" == 5.* && "$XIOS_VER" == 3 ]]; then
-    svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS3/trunk@2904 xios
+#    svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS3/trunk@2904 xios
+    git clone --branch xios-3.0.x https://gitlab.in2p3.fr/ipsl/projets/xios-projects/xios.git xios
     cd xios
     cp $REPO_DIR/arch/xios/3/* ./arch
 else
   case "${NEMO_VER}"
     in
-    4.2|4.2.?|5.*) svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk@2379 xios
+    4.2|4.2.?|5.*) git clone --branch XIOS2 https://gitlab.in2p3.fr/ipsl/projets/xios-projects/xios.git xios
+#    svn checkout  http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk@2379 xios
            cd xios
            cp $REPO_DIR/arch/xios/2/* ./arch
            ;;
-    4.0.?)   svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5@1964 xios
+    4.0.?) git clone --branch xios-2.5.x https://gitlab.in2p3.fr/ipsl/projets/xios-projects/xios.git xios
+#    svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5@1964 xios
            cd xios
            cp $REPO_DIR/arch/xios/2.5/* ./arch
            ;;
